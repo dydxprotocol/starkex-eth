@@ -1,0 +1,40 @@
+{
+  "name": "@dydxprotocol/starkex-eth",
+  "version": "0.0.4",
+  "description": "Cryptographic functions for use with StarkEx",
+  "main": "build/src/index.js",
+  "scripts": {
+    "build": "rm -rf build/ && npm run compile",
+    "compile:watch": "npm run compile -- --watch",
+    "compile": "tsc",
+    "coverage": "npm run test -- --coverage",
+    "fix": "npm run lint -- --fix",
+    "lint": "eslint --ext .ts,.js .",
+    "prepublishOnly": "npm run compile",
+    "test:watch": "npm test -- --watch",
+    "test": "TZ=UTC NODE_ENV=test npm run build && jest --runInBand --forceExit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dydxprotocol/starkex-eth.git"
+  },
+  "author": "dYdX",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/dydxprotocol/starkex-eth/issues"
+  },
+  "homepage": "https://github.com/dydxprotocol/starkex-eth#readme",
+  "dependencies": {
+    "@types/big.js": "^4.0.5",
+    "@types/elliptic": "^6.4.12",
+    "@types/web3": "1.0.18",
+    "big.js": "5.2.2",
+    "bignumber.js": "^9.0.1",
+    "lodash": "^4.17.20",
+    "starkware-crypto": "^1.9.7",
+    "web3": "^1.2.1"
+  },
+  "devDependencies": {
+    "@dydxprotocol/node-service-base-dev": "0.0.8"
+  }
+}

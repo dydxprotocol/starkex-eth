@@ -1,0 +1,14 @@
+# dependencies
+node_modules
+
+# testing
+coverage
+junit.xml
+test-results
+
+# production
+build
+
+# misc
+.DS_Store
+npm-debug.log
