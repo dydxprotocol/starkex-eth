@@ -25,10 +25,14 @@
   },
   "homepage": "https://github.com/dydxprotocol/starkex-eth#readme",
   "dependencies": {
-    "@types/elliptic": "^6.4.12",
     "@types/big.js": "^4.0.5",
+    "@types/elliptic": "^6.4.12",
+    "@types/web3": "1.0.18",
     "big.js": "5.2.2",
-    "starkware-crypto": "^1.9.7"
+    "bignumber.js": "^9.0.1",
+    "lodash": "^4.17.20",
+    "starkware-crypto": "^1.9.7",
+    "web3": "^1.2.1"
   },
   "devDependencies": {
     "@dydxprotocol/node-service-base-dev": "0.0.8"

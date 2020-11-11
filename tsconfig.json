@@ -6,6 +6,9 @@
     "src"
   ],
   "compilerOptions": {
-    "outDir": "build"
+    "outDir": "build",
+    "types": [
+      "@types/web3",
+    ]
   }
 }
