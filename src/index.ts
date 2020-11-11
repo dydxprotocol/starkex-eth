@@ -1,1 +1,1 @@
-export { StarkwareLib } from './StarkLib';
+export { StarkwareLib } from './StarkwareLib';
