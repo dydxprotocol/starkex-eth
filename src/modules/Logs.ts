@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 import { Log, EventLog } from 'web3-core';
@@ -7,7 +6,6 @@ import { AbiInput, AbiItem } from 'web3-utils';
 
 import { Contracts } from '../lib/Contracts';
 import {
-  BaseValue,
   TxResult,
 } from '../types';
 
@@ -30,13 +28,9 @@ export class Logs {
     if (!this._contractsByAddress) {
       this._contractsByAddress = {};
       for (const { contract, isTest } of this.contracts.contractsList) {
-        if (isTest) {
-          continue; // Ignore test contracts.
+        if (!isTest && contract.options.address) {
+          this._contractsByAddress[contract.options.address.toLowerCase()] = contract;
         }
-        if (!contract.options.address) {
-          continue; // Ignore contracts which aren't deployed for this market pair and network ID.
-        }
-        this._contractsByAddress[contract.options.address.toLowerCase()] = contract;
       }
     }
     return this._contractsByAddress;
@@ -47,7 +41,7 @@ export class Logs {
 
     if (receipt.logs) {
       events = JSON.parse(JSON.stringify(receipt.logs));
-      return events.map(e => this.parseLog(e)).filter(l => !!l);
+      return events.map((e) => this.parseLog(e)).filter((l) => !!l);
     }
 
     if (receipt.events) {
@@ -55,13 +49,13 @@ export class Logs {
       events = [];
       Object.values(tempEvents).forEach((e: any) => {
         if (Array.isArray(e)) {
-          e.forEach(ev => events.push(ev));
+          e.forEach((ev) => events.push(ev));
         } else {
           events.push(e);
         }
       });
       events.sort((a, b) => a.logIndex - b.logIndex);
-      return events.map(e => this.parseEvent(e)).filter(l => !!l);
+      return events.map((e) => this.parseEvent(e)).filter((l) => !!l);
     }
 
     throw new Error('Receipt has no logs');
@@ -131,10 +125,12 @@ export class Logs {
       // returning everything as strings
       // because listener just needs to store the data
       switch (input.name) {
+        case 'starkKey':
         case 'assetType':
         case 'vaultId':
         case 'nonQuantizedAmount':
         case 'quantizedAmount':
+        default:
           return argValue;
       }
     }

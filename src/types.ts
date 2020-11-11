@@ -10,7 +10,7 @@ import {
 
 export type Provider = HttpProvider | IpcProvider | WebsocketProvider;
 
-export type address = string;
+export type Address = string;
 export type Integer = BigNumber;
 export type Decimal = BigNumber;
 export type BigNumberable = BigNumber | string | number;
@@ -54,7 +54,7 @@ export enum ConfirmationType {
 }
 
 export interface TxOptions {
-  from?: address | null;
+  from?: Address | null;
   value?: number | string;
 }
 

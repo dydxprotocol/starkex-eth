@@ -16,22 +16,19 @@
 
 */
 import _ from 'lodash';
-import { Provider } from 'web3/providers';
 import Web3 from 'web3';
-import PromiEvent from 'web3/promiEvent';
-import { Contract, ContractSendMethod, EstimateGasOptions } from 'web3-eth-contract';
-import starkwarePerpetualJson from '../contracts/starkware-perpetual.json';
 import {
-  TransactionReceipt
+  TransactionReceipt,
 } from 'web3-core';
-import {
-  Tx
-} from 'web3/eth/types';
+import { Contract, ContractSendMethod, EstimateGasOptions } from 'web3-eth-contract';
+import PromiEvent from 'web3/promiEvent';
+import { Provider } from 'web3/providers';
 
+import starkwarePerpetualJson from '../contracts/starkware-perpetual.json';
 // Contracts
 import {
   TxResult,
-  address,
+  Address,
   ConfirmationType,
   CallOptions,
   SendOptions,
@@ -45,10 +42,6 @@ enum OUTCOMES {
   REJECTED = 2,
 }
 
-interface CallableTransactionObject<T> {
-  call(tx?: Tx, blockNumber?: number | string): Promise<T>;
-}
-
 interface Json {
   abi: any;
   networks: { [network: number]: any };
@@ -59,8 +52,6 @@ interface ContractInfo {
   json: Json;
   isTest: boolean;
 }
-
-const SUBTRACT_GAS_LIMIT: number = 100000;
 
 export class Contracts {
   private defaultOptions: SendOptions;
@@ -93,14 +84,11 @@ export class Contracts {
 
     this.networkId = networkId;
 
-
-
     // Contracts
     this.starkwarePerpetual = this.addContract(starkwarePerpetualJson);
     this.setProvider(provider, networkId);
     this.setDefaultAccount(this.web3.eth.defaultAccount as string);
   }
-
 
   public getCumulativeGasUsed(): number {
     return this._cumulativeGasUsed;
@@ -114,7 +102,7 @@ export class Contracts {
   /**
    * Get a list of gas used by function since last call to resetGasUsed().
    */
-  public * getGasUsedByFunction(): Iterable<{ name: string, gasUsed: number }> {
+  public* getGasUsedByFunction(): Iterable<{ name: string, gasUsed: number }> {
     for (const gasUsed of this._gasUsedByFunction) {
       yield gasUsed;
     }
@@ -130,7 +118,7 @@ export class Contracts {
     this._countGasUsage = [1001, 1002].includes(networkId);
 
     this.contractsList.forEach(
-      contract => this.setContractProvider(
+      (contract) => this.setContractProvider(
         contract.contract,
         contract.json,
         provider,
@@ -140,10 +128,12 @@ export class Contracts {
   }
 
   public setDefaultAccount(
-    account: address,
+    account: Address,
   ): void {
     this.contractsList.forEach(
-      contract => contract.contract.options.from = account,
+      (contract) => {
+        contract.contract.options.from = account;
+      },
     );
   }
 
@@ -173,8 +163,8 @@ export class Contracts {
     const result = await this._send(method, sendOptions);
 
     if (
-      this._countGasUsage
-      && [
+      this._countGasUsage &&
+      [
         ConfirmationType.Both,
         ConfirmationType.Confirmed,
       ].includes(sendOptions.confirmationType!)
@@ -211,7 +201,6 @@ export class Contracts {
   ): void {
     (contract as any).setProvider(provider);
 
-
     // Use market-specific info if available, and fall back to non-market-specific info.
     const deployedInfo = contractJson.networks[networkId];
     contract.options.address = deployedInfo && deployedInfo.address;
@@ -246,7 +235,9 @@ export class Contracts {
       }
     }
 
-    const promi: PromiEvent<Contract> | any = method.send(this.toNativeSendOptions(txOptions) as any);
+    const promi: PromiEvent<Contract> | any = method.send(
+      this.toNativeSendOptions(txOptions) as any,
+    );
 
     let hashOutcome = OUTCOMES.INITIAL;
     let confirmationOutcome = OUTCOMES.INITIAL;
@@ -291,10 +282,10 @@ export class Contracts {
         (resolve, reject) => {
           promi.on('error', (error: Error) => {
             if (
-              confirmationOutcome === OUTCOMES.INITIAL
-              && (
-                confirmationType === ConfirmationType.Confirmed
-                || hashOutcome === OUTCOMES.RESOLVED
+              confirmationOutcome === OUTCOMES.INITIAL &&
+              (
+                confirmationType === ConfirmationType.Confirmed ||
+                hashOutcome === OUTCOMES.RESOLVED
               )
             ) {
               confirmationOutcome = OUTCOMES.REJECTED;
