@@ -1,8 +1,8 @@
 {
   "name": "@dydxprotocol/starkex-eth",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Cryptographic functions for use with StarkEx",
-  "main": "build/index.js",
+  "main": "build/src/index.js",
   "scripts": {
     "build": "rm -rf build/ && npm run compile",
     "compile:watch": "npm run compile -- --watch",
