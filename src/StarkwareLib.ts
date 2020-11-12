@@ -12,7 +12,7 @@ export class StarkwareLib {
   constructor(
     provider: Provider,
     networkId: number = Networks.ROPSTEN,
-    options: SendOptions,
+    options?: SendOptions,
   ) {
     const realProvider: Provider = provider;
 
@@ -32,7 +32,7 @@ export class StarkwareLib {
     provider: Provider,
     networkId: number,
     web3: Web3,
-    options: SendOptions,
+    options?: SendOptions,
   ): any {
     return new Contracts(provider, networkId, web3, options);
   }
