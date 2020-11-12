@@ -9,6 +9,7 @@
     "outDir": "build",
     "types": [
       "@types/web3",
+      "@types/jest",
     ]
   }
 }
