@@ -78,7 +78,7 @@ jobs:
           key: cache-completed-build-{{ .Environment.CIRCLE_SHA1 }}
       - add_ssh_keys:
           fingerprints:
-            - "d5:85:4c:16:17:80:7e:4c:af:48:4d:59:61:0e:2a:b3"
+            - "cf:ef:b6:9f:88:09:fe:10:74:70:11:f8:4f:8d:30:59"
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/build/.npmrc
