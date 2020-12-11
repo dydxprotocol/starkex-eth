@@ -33,6 +33,42 @@
       "type": "function"
     },
     {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "configurationHash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "globalConfigurationHash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "constant": false,
       "inputs": [
         {
@@ -670,6 +706,43 @@
         {
           "indexed": false,
           "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "nonQuantizedAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "quantizedAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "assetId",
+          "type": "uint256"
+        }
+      ],
+      "name": "LogMintWithdrawalPerformed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "starkKey",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
           "name": "assetId",
           "type": "uint256"
         },
@@ -680,7 +753,7 @@
           "type": "uint256"
         }
       ],
-      "name": "LogMintableWithdrawal",
+      "name": "LogMintableWithdrawalAllowed",
       "type": "event"
     },
     {
@@ -780,32 +853,6 @@
         }
       ],
       "name": "LogNftWithdrawalPerformed",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "operator",
-          "type": "address"
-        }
-      ],
-      "name": "LogOperatorAdded",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "operator",
-          "type": "address"
-        }
-      ],
-      "name": "LogOperatorRemoved",
       "type": "event"
     },
     {
@@ -915,43 +962,6 @@
         }
       ],
       "name": "LogUserRegistered",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "starkKey",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "nonQuantizedAmount",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "quantizedAmount",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "assetId",
-          "type": "uint256"
-        }
-      ],
-      "name": "LogUserWithdrawalMint",
       "type": "event"
     },
     {
@@ -1172,7 +1182,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "assetType",
+          "name": "assetId",
           "type": "uint256"
         },
         {
@@ -1415,27 +1425,6 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "testedOperator",
-          "type": "address"
-        }
-      ],
-      "name": "isOperator",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "internalType": "address",
           "name": "testedAdmin",
           "type": "address"
         }
@@ -1513,12 +1502,17 @@
       "constant": false,
       "inputs": [
         {
-          "internalType": "address",
-          "name": "newOperator",
-          "type": "address"
+          "internalType": "uint256",
+          "name": "assetType",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "assetInfo",
+          "type": "bytes"
         }
       ],
-      "name": "registerOperator",
+      "name": "registerSystemAssetType",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
@@ -1529,12 +1523,12 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "assetType",
+          "name": "",
           "type": "uint256"
         },
         {
           "internalType": "bytes",
-          "name": "assetInfo",
+          "name": "",
           "type": "bytes"
         }
       ],
@@ -1549,17 +1543,17 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "assetType",
+          "name": "",
           "type": "uint256"
         },
         {
           "internalType": "bytes",
-          "name": "assetInfo",
+          "name": "",
           "type": "bytes"
         },
         {
           "internalType": "uint256",
-          "name": "quantum",
+          "name": "",
           "type": "uint256"
         }
       ],
@@ -1619,36 +1613,6 @@
         }
       ],
       "name": "registerUserAdmin",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "assetType",
-          "type": "uint256"
-        }
-      ],
-      "name": "setSystemAssetType",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "removedOperator",
-          "type": "address"
-        }
-      ],
-      "name": "unregisterOperator",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
@@ -1814,6 +1778,64 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "bytes32",
+          "name": "configHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "LogGlobalConfiguration",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "configItem",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "configHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "LogItemConfiguration",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        }
+      ],
+      "name": "LogOperatorAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        }
+      ],
+      "name": "LogOperatorRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
           "internalType": "uint256",
           "name": "sequenceNumber",
           "type": "uint256"
@@ -1961,6 +1983,92 @@
       "type": "function"
     },
     {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "testedOperator",
+          "type": "address"
+        }
+      ],
+      "name": "isOperator",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOperator",
+          "type": "address"
+        }
+      ],
+      "name": "registerOperator",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "assetId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "configHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "setAssetConfiguration",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "configHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "setGlobalConfiguration",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "removedOperator",
+          "type": "address"
+        }
+      ],
+      "name": "unregisterOperator",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "constant": false,
       "inputs": [
         {
@@ -1986,6 +2094,61 @@
         {
           "indexed": false,
           "internalType": "uint256",
+          "name": "starkKeyA",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "starkKeyB",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "vaultIdA",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "vaultIdB",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "assetIdA",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "assetIdB",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amountA",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amountB",
+          "type": "uint256"
+        }
+      ],
+      "name": "LogForcedTradeRequest",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
           "name": "starkKey",
           "type": "uint256"
         },
@@ -1994,9 +2157,15 @@
           "internalType": "uint256",
           "name": "vaultId",
           "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "quantizedAmount",
+          "type": "uint256"
         }
       ],
-      "name": "LogFullWithdrawalRequest",
+      "name": "LogForcedWithdrawalRequest",
       "type": "event"
     },
     {
@@ -2004,16 +2173,51 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "starkKey",
+          "name": "starkKeyA",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "vaultId",
+          "name": "starkKeyB",
           "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "vaultIdA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "vaultIdB",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "assetIdA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "assetIdB",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountB",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "signatureB",
+          "type": "bytes"
         }
       ],
-      "name": "freezeRequest",
+      "name": "forcedTradeRequest",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
@@ -2031,12 +2235,179 @@
           "internalType": "uint256",
           "name": "vaultId",
           "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "quantizedAmount",
+          "type": "uint256"
         }
       ],
-      "name": "fullWithdrawalRequest",
+      "name": "forcedWithdrawalRequest",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "starkKey",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "vaultId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "quantizedAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "freezeRequest",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "starkKeyA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "starkKeyB",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "vaultIdA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "vaultIdB",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "assetIdA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "assetIdB",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountB",
+          "type": "uint256"
+        }
+      ],
+      "name": "freezeRequest",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "starkKeyA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "starkKeyB",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "vaultIdA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "vaultIdB",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "assetIdA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "assetIdB",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountB",
+          "type": "uint256"
+        }
+      ],
+      "name": "getForcedTradeRequest",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "starkKey",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "vaultId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "quantizedAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "getForcedWithdrawalRequest",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
       "type": "function"
     }
   ]

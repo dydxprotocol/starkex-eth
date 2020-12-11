@@ -24,7 +24,7 @@ import { Contract, ContractSendMethod, EstimateGasOptions } from 'web3-eth-contr
 import PromiEvent from 'web3/promiEvent';
 import { Provider } from 'web3/providers';
 
-import starkwarePerpetualJson from '../contracts/starkware-perpetual.json';
+import starkwarePerpetualAbi from '../contracts/starkware-perpetual-abi.json';
 // Contracts
 import {
   TxResult,
@@ -85,7 +85,7 @@ export class Contracts {
     this.networkId = networkId;
 
     // Contracts
-    this.starkwarePerpetual = this.addContract(starkwarePerpetualJson);
+    this.starkwarePerpetual = this.addContract(starkwarePerpetualAbi);
     this.setProvider(provider, networkId);
     this.setDefaultAccount(this.web3.eth.defaultAccount as string);
   }
