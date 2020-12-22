@@ -25,6 +25,7 @@ import PromiEvent from 'web3/promiEvent';
 import { Provider } from 'web3/providers';
 
 import starkwarePerpetualAbi from '../contracts/starkware-perpetual-abi.json';
+import usdcAbi from '../contracts/usdc-abi.json';
 // Contracts
 import {
   TxResult,
@@ -63,6 +64,7 @@ export class Contracts {
   public networkId: number;
   public contractsList: ContractInfo[] = [];
   public starkwarePerpetual: Contract;
+  public collateralToken: Contract;
 
   constructor(
     provider: Provider,
@@ -86,6 +88,7 @@ export class Contracts {
 
     // Contracts
     this.starkwarePerpetual = this.addContract(starkwarePerpetualAbi);
+    this.collateralToken = this.addContract(usdcAbi);
     this.setProvider(provider, networkId);
     this.setDefaultAccount(this.web3.eth.defaultAccount as string);
   }
