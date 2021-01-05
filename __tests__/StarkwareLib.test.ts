@@ -1,6 +1,8 @@
+import { provider as Provider } from 'web3-core';
+
 import { StarkwareLib } from '../src/index';
 import { DummyProvider } from './helpers/DummyProvider';
-import { Networks, Provider } from '../src/types';
+import { Networks } from '../src/types';
 
 describe('StarwareLib#initiate', () => {
   const dummyProvider = new DummyProvider() as unknown as Provider;

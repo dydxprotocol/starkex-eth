@@ -18,7 +18,7 @@
 import _ from 'lodash';
 import Web3 from 'web3';
 import {
-  provider,
+  provider as Provider,
   PromiEvent,
   TransactionReceipt,
 } from 'web3-core';
@@ -71,7 +71,7 @@ export class Contracts {
   public collateralToken: Contract;
 
   constructor(
-    provider: provider,
+    provider: Provider,
     networkId: number,
     web3: Web3,
     sendOptions: SendOptions = {},
@@ -116,7 +116,7 @@ export class Contracts {
   }
 
   public setProvider(
-    provider: provider,
+    provider: Provider,
     networkId: number,
   ): void {
     this.networkId = networkId;
@@ -203,7 +203,7 @@ export class Contracts {
   private setContractProvider(
     contract: Contract,
     contractJson: Json,
-    provider: provider,
+    provider: Provider,
     networkId: number,
   ): void {
     (contract as any).setProvider(provider);
