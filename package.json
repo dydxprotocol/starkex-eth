@@ -1,6 +1,6 @@
 {
   "name": "@dydxprotocol/starkex-eth",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Cryptographic functions for use with StarkEx",
   "main": "build/src/index.js",
   "scripts": {
@@ -25,14 +25,13 @@
   },
   "homepage": "https://github.com/dydxprotocol/starkex-eth#readme",
   "dependencies": {
-    "@types/big.js": "^4.0.5",
+    "@types/big.js": "^6.0.0",
     "@types/elliptic": "^6.4.12",
-    "@types/web3": "1.0.18",
-    "big.js": "5.2.2",
+    "big.js": "^6.0.0",
     "bignumber.js": "^9.0.1",
     "lodash": "^4.17.20",
     "starkware-crypto": "^1.9.7",
-    "web3": "^1.2.1"
+    "web3": "1.3.0"
   },
   "devDependencies": {
     "@dydxprotocol/node-service-base-dev": "0.0.8"

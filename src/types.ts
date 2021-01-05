@@ -1,14 +1,9 @@
 import BigNumber from 'bignumber.js';
 import {
-  HttpProvider,
-  IpcProvider,
-  WebsocketProvider,
   TransactionReceipt,
   Log,
   EventLog,
 } from 'web3-core';
-
-export type Provider = HttpProvider | IpcProvider | WebsocketProvider;
 
 export type Address = string;
 export type Integer = BigNumber;
