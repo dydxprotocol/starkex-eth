@@ -28,6 +28,7 @@ import {
   EstimateGasOptions,
 } from 'web3-eth-contract';
 
+import mintableTokenAbi from '../contracts/mintable-token-abi.json';
 import starkwarePerpetualAbi from '../contracts/starkware-perpetual-abi.json';
 import usdcAbi from '../contracts/usdc-abi.json';
 // Contracts
@@ -60,15 +61,13 @@ interface ContractInfo {
 
 export class Contracts {
   private defaultOptions: SendOptions;
-  private _cumulativeGasUsed: number = 0;
-  private _gasUsedByFunction: { name: string, gasUsed: number }[] = [];
-  private _countGasUsage: boolean = false;
   protected web3: Web3;
 
   public networkId: number;
   public contractsList: ContractInfo[] = [];
   public starkwarePerpetual: Contract;
   public collateralToken: Contract;
+  public mintableToken: Contract;
 
   constructor(
     provider: Provider,
@@ -93,26 +92,9 @@ export class Contracts {
     // Contracts
     this.starkwarePerpetual = this.addContract(starkwarePerpetualAbi);
     this.collateralToken = this.addContract(usdcAbi);
+    this.mintableToken = this.addContract(mintableTokenAbi);
     this.setProvider(provider, networkId);
     this.setDefaultAccount(this.web3.eth.defaultAccount as string);
-  }
-
-  public getCumulativeGasUsed(): number {
-    return this._cumulativeGasUsed;
-  }
-
-  public resetGasUsed(): void {
-    this._cumulativeGasUsed = 0;
-    this._gasUsedByFunction = []; // leave work for garbage collector
-  }
-
-  /**
-   * Get a list of gas used by function since last call to resetGasUsed().
-   */
-  public* getGasUsedByFunction(): Iterable<{ name: string, gasUsed: number }> {
-    for (const gasUsed of this._gasUsedByFunction) {
-      yield gasUsed;
-    }
   }
 
   public setProvider(
@@ -120,9 +102,6 @@ export class Contracts {
     networkId: number,
   ): void {
     this.networkId = networkId;
-
-    // Only record gas usage for local testnets.
-    this._countGasUsage = [1001, 1002].includes(networkId);
 
     this.contractsList.forEach(
       (contract) => this.setContractProvider(
@@ -168,24 +147,6 @@ export class Contracts {
     };
 
     const result = await this._send(method, sendOptions);
-
-    if (
-      this._countGasUsage &&
-      [
-        ConfirmationType.Both,
-        ConfirmationType.Confirmed,
-      ].includes(sendOptions.confirmationType!)
-    ) {
-      // Count gas used.
-      const contract: Contract = (method as any)._parent;
-      const contractInfo = _.find(this.contractsList, { contract });
-      if (contractInfo && !contractInfo.isTest) {
-        const gasUsed: number = (result as TxResult).gasUsed as number;
-        this._cumulativeGasUsed += gasUsed;
-        this._gasUsedByFunction.push({ gasUsed, name: (method as any)._method.name });
-      }
-    }
-
     return result;
   }
 
