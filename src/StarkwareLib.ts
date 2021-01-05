@@ -1,8 +1,11 @@
 import Web3 from 'web3';
+import {
+  provider as Provider,
+} from 'web3-core';
 
 import { Contracts } from './lib/Contracts';
 import { Logs } from './modules/Logs';
-import { Networks, Provider, SendOptions } from './types';
+import { Networks, SendOptions } from './types';
 
 export class StarkwareLib {
   public web3: Web3;

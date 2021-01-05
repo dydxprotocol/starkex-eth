@@ -18,11 +18,15 @@
 import _ from 'lodash';
 import Web3 from 'web3';
 import {
+  provider as Provider,
+  PromiEvent,
   TransactionReceipt,
 } from 'web3-core';
-import { Contract, ContractSendMethod, EstimateGasOptions } from 'web3-eth-contract';
-import PromiEvent from 'web3/promiEvent';
-import { Provider } from 'web3/providers';
+import {
+  Contract,
+  ContractSendMethod,
+  EstimateGasOptions,
+} from 'web3-eth-contract';
 
 import starkwarePerpetualAbi from '../contracts/starkware-perpetual-abi.json';
 import usdcAbi from '../contracts/usdc-abi.json';
