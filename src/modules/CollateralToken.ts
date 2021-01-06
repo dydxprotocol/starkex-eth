@@ -109,7 +109,7 @@ export class CollateralToken {
     );
   }
 
-  public async setPerpetualAllowance(
+  public async setExchangeAllowance(
     ownerAddress: Address,
     amount: BigNumberable,
     options: SendOptions = {},
