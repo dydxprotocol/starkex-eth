@@ -4,29 +4,44 @@ import {
 } from 'web3-core';
 
 import { Contracts } from './lib/Contracts';
+import { CollateralToken } from './modules/CollateralToken';
+import { Exchange } from './modules/Exchange';
 import { Logs } from './modules/Logs';
-import { Networks, SendOptions } from './types';
+import { MintableToken } from './modules/MintableToken';
+import { SendOptions } from './types';
 
 export class StarkwareLib {
-  public web3: Web3;
-  public logs: Logs;
   public contracts: Contracts;
+  public exchange: Exchange;
+  public collateralToken: CollateralToken;
+  public mintableToken: MintableToken;
+  public logs: Logs;
+  public web3: Web3;
 
   constructor(
     provider: Provider,
-    networkId: number = Networks.ROPSTEN,
+    networkId: number,
     options?: SendOptions,
   ) {
-    const realProvider: Provider = provider;
-
-    this.web3 = new Web3(realProvider);
+    this.web3 = new Web3(provider);
     this.contracts = this.getContracts(
       provider,
       networkId,
       this.web3,
       options,
     );
+    this.collateralToken = new CollateralToken(this.contracts);
+    this.mintableToken = new MintableToken(this.contracts);
+    this.exchange = new Exchange(this.contracts);
     this.logs = new Logs(this.web3, this.contracts);
+  }
+
+  public setProvider(
+    provider: Provider,
+    networkId: number,
+  ): void {
+    this.web3.setProvider(provider);
+    this.contracts.setProvider(provider, networkId);
   }
 
   // ============ Helper Functions ============
