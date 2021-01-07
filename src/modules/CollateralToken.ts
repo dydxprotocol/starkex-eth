@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { Contract } from 'web3-eth-contract';
 
-import { INTEGERS } from '../lib/Constants';
+import { COLLATERAL_ASSET_ID, INTEGERS } from '../lib/Constants';
 import { Contracts } from '../lib/Contracts';
 import {
   BigNumberable,
@@ -20,6 +20,10 @@ export class CollateralToken {
   ) {
     this.contracts = contracts;
     this.token = contracts.collateralToken;
+  }
+
+  public getAssetId(): string {
+    return COLLATERAL_ASSET_ID[this.contracts.networkId];
   }
 
   public async getAllowance(
