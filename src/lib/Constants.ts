@@ -11,5 +11,5 @@ export const INTEGERS = {
 };
 
 export const COLLATERAL_ASSET_ID = {
-  [Networks.ROPSTEN]: '0x24d6ea88d53b68601dcf03b3f204cbe829d3689194f823bd6a7f74292c22334',
+  [Networks.ROPSTEN]: '0x02c04d8b650f44092278a7cb1e1028c82025dff622db96c934b611b84cc8de5a',
 };
