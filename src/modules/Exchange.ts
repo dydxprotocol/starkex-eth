@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 import {
   ADDRESSES,
   COLLATERAL_ASSET_ID,
- } from '../lib/Constants';
+} from '../lib/Constants';
 import { Contracts } from '../lib/Contracts';
 import { starkKeyToUint256 } from '../lib/StarkKeyHelper';
 import {
