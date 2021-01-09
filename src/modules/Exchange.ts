@@ -1,6 +1,9 @@
 import BigNumber from 'bignumber.js';
 
-import { COLLATERAL_ASSET_ID } from '../lib/Constants';
+import {
+  ADDRESSES,
+  COLLATERAL_ASSET_ID,
+ } from '../lib/Constants';
 import { Contracts } from '../lib/Contracts';
 import { starkKeyToUint256 } from '../lib/StarkKeyHelper';
 import {
@@ -80,6 +83,26 @@ export class Exchange {
       ),
       options,
     );
+  }
+
+  // ============ Getters ============
+
+  public async getEthKey(
+    starkKey: string,
+    options?: CallOptions,
+  ): Promise<string | null> {
+    const result = await this.contracts.call(
+      this.contracts.starkwarePerpetual.methods.getEthKey(
+        starkKeyToUint256(starkKey),
+      ),
+      options,
+    );
+
+    if (result === ADDRESSES.ZERO) {
+      return null;
+    }
+
+    return result;
   }
 
   public async hasCancellationRequest(
