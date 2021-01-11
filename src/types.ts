@@ -9,6 +9,8 @@ export type Address = string;
 export type Integer = BigNumber;
 export type Decimal = BigNumber;
 export type BigNumberable = BigNumber | string | number;
+export type LogValue = string | number;
+export type ParsedLogValue = BigNumber | string | number;
 
 export const Networks = {
   MAINNET: 1,
@@ -74,4 +76,13 @@ export const BASE_DECIMALS = 6;
 export interface SignedIntStruct {
   value: string;
   isPositive: boolean;
+}
+
+export interface ParsedLogArgs {
+  [name: string]: ParsedLogValue;
+}
+
+export interface ParsedLog extends Log {
+  name?: string;
+  args: ParsedLogArgs;
 }

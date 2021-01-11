@@ -6,6 +6,7 @@ import {
 import { Contracts } from './lib/Contracts';
 import { CollateralToken } from './modules/CollateralToken';
 import { Exchange } from './modules/Exchange';
+import { FactRegistry } from './modules/FactRegistry';
 import { Logs } from './modules/Logs';
 import { MintableToken } from './modules/MintableToken';
 import { SendOptions } from './types';
@@ -13,6 +14,7 @@ import { SendOptions } from './types';
 export class StarkwareLib {
   public contracts: Contracts;
   public exchange: Exchange;
+  public factRegistry: FactRegistry;
   public collateralToken: CollateralToken;
   public mintableToken: MintableToken;
   public logs: Logs;
@@ -33,6 +35,7 @@ export class StarkwareLib {
     this.collateralToken = new CollateralToken(this.contracts);
     this.mintableToken = new MintableToken(this.contracts);
     this.exchange = new Exchange(this.contracts);
+    this.factRegistry = new FactRegistry(this.contracts);
     this.logs = new Logs(this.web3, this.contracts);
   }
 

@@ -2,13 +2,11 @@
   "networks": {
     "1": {
       "links": {},
-      "address": "0x8a6629fEba4196E0A61B8E8C94D4905e525bc055",
-      "transactionHash": "0x8d4f6bd711b52cc1dad8d636d2462af330e12b2539bd9bc0f774bfa999748b82"
+      "address": "0x0000000000000000000000000000000000000000",
     },
     "3": {
       "links": {},
       "address": "0xe48e63F4ded64c29259b0Cd5E4ea976DCE930eB2",
-      "transactionHash": "0xf4b58f2944105aec4d477661e259ce19c12d08787483a2d6f25f708ba1306490"
     }
   },
   "abi": [
@@ -16,6 +14,21 @@
       "payable": true,
       "stateMutability": "payable",
       "type": "fallback"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "UPGRADE_DELAY_SLOT",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
     },
     {
       "constant": true,
@@ -62,6 +75,21 @@
           "internalType": "bytes32",
           "name": "",
           "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "implementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "_implementation",
+          "type": "address"
         }
       ],
       "payable": false,
@@ -236,6 +264,21 @@
           "internalType": "string",
           "name": "",
           "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "MAX_FORCED_ACTIONS_REQS_PER_BLOCK",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         }
       ],
       "payable": false,
@@ -1836,6 +1879,19 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "bytes32",
+          "name": "stateTransitionFact",
+          "type": "bytes32"
+        }
+      ],
+      "name": "LogStateTransitionFact",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
           "internalType": "uint256",
           "name": "sequenceNumber",
           "type": "uint256"
@@ -1845,21 +1901,9 @@
           "internalType": "uint256",
           "name": "batchId",
           "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "vaultRoot",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "orderRoot",
-          "type": "uint256"
         }
       ],
-      "name": "LogRootUpdate",
+      "name": "LogUpdateState",
       "type": "event"
     },
     {
@@ -1877,11 +1921,6 @@
         },
         {
           "internalType": "uint256",
-          "name": "assetId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
           "name": "quantizedAmount",
           "type": "uint256"
         }
@@ -1890,6 +1929,103 @@
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "starkKeyA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "starkKeyB",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "vaultIdA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "vaultIdB",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "collateralAssetId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "syntheticAssetId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountCollateral",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountSynthetic",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "aIsBuyingSynthetic",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "nonce",
+          "type": "uint256"
+        }
+      ],
+      "name": "getForcedTradeRequest",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "starkKey",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "vaultId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "quantizedAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "getForcedWithdrawalRequest",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -2073,7 +2209,7 @@
       "inputs": [
         {
           "internalType": "uint256[]",
-          "name": "publicInput",
+          "name": "programOutput",
           "type": "uint256[]"
         },
         {
@@ -2118,25 +2254,37 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "assetIdA",
+          "name": "collateralAssetId",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "assetIdB",
+          "name": "syntheticAssetId",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "amountA",
+          "name": "amountCollateral",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "amountB",
+          "name": "amountSynthetic",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "aIsBuyingSynthetic",
+          "type": "bool"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "nonce",
           "type": "uint256"
         }
       ],
@@ -2193,28 +2341,48 @@
         },
         {
           "internalType": "uint256",
-          "name": "assetIdA",
+          "name": "collateralAssetId",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "assetIdB",
+          "name": "syntheticAssetId",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "amountA",
+          "name": "amountCollateral",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "amountB",
+          "name": "amountSynthetic",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "aIsBuyingSynthetic",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "submissionExpirationTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "nonce",
           "type": "uint256"
         },
         {
           "internalType": "bytes",
-          "name": "signatureB",
+          "name": "signature",
           "type": "bytes"
+        },
+        {
+          "internalType": "bool",
+          "name": "premiumCost",
+          "type": "bool"
         }
       ],
       "name": "forcedTradeRequest",
@@ -2240,6 +2408,11 @@
           "internalType": "uint256",
           "name": "quantizedAmount",
           "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "premiumCost",
+          "type": "bool"
         }
       ],
       "name": "forcedWithdrawalRequest",
@@ -2253,17 +2426,52 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "starkKey",
+          "name": "starkKeyA",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "vaultId",
+          "name": "starkKeyB",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "quantizedAmount",
+          "name": "vaultIdA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "vaultIdB",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "collateralAssetId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "syntheticAssetId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountCollateral",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountSynthetic",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "aIsBuyingSynthetic",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "nonce",
           "type": "uint256"
         }
       ],
@@ -2278,112 +2486,6 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "starkKeyA",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "starkKeyB",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "vaultIdA",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "vaultIdB",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "assetIdA",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "assetIdB",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amountA",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amountB",
-          "type": "uint256"
-        }
-      ],
-      "name": "freezeRequest",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "starkKeyA",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "starkKeyB",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "vaultIdA",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "vaultIdB",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "assetIdA",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "assetIdB",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amountA",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amountB",
-          "type": "uint256"
-        }
-      ],
-      "name": "getForcedTradeRequest",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "internalType": "uint256",
           "name": "starkKey",
           "type": "uint256"
         },
@@ -2398,16 +2500,10 @@
           "type": "uint256"
         }
       ],
-      "name": "getForcedWithdrawalRequest",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
+      "name": "freezeRequest",
+      "outputs": [],
       "payable": false,
-      "stateMutability": "view",
+      "stateMutability": "nonpayable",
       "type": "function"
     }
   ]

@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js';
 
 import {
-  ADDRESSES,
   COLLATERAL_ASSET_ID,
 } from '../lib/Constants';
 import { Contracts } from '../lib/Contracts';
@@ -91,18 +90,20 @@ export class Exchange {
     starkKey: string,
     options?: CallOptions,
   ): Promise<string | null> {
-    const result = await this.contracts.call(
-      this.contracts.starkwarePerpetual.methods.getEthKey(
-        starkKeyToUint256(starkKey),
-      ),
-      options,
-    );
-
-    if (result === ADDRESSES.ZERO) {
-      return null;
+    try {
+      const result = await this.contracts.call(
+        this.contracts.starkwarePerpetual.methods.getEthKey(
+          starkKeyToUint256(starkKey),
+        ),
+        options,
+      );
+      return result;
+    } catch (e) {
+      if (e.message && e.message.includes('USER_UNREGISTERED')) {
+        return null;
+      }
+      throw e;
     }
-
-    return result;
   }
 
   public async hasCancellationRequest(
