@@ -28,6 +28,7 @@ import {
   EstimateGasOptions,
 } from 'web3-eth-contract';
 
+import factRegistryAbi from '../contracts/fact-registry-abi.json';
 import mintableTokenAbi from '../contracts/mintable-token-abi.json';
 import starkwarePerpetualAbi from '../contracts/starkware-perpetual-abi.json';
 import usdcAbi from '../contracts/usdc-abi.json';
@@ -65,6 +66,7 @@ export class Contracts {
 
   public networkId: number;
   public contractsList: ContractInfo[] = [];
+  public factRegistry: Contract;
   public starkwarePerpetual: Contract;
   public collateralToken: Contract;
   public mintableToken: Contract;
@@ -90,6 +92,7 @@ export class Contracts {
     this.networkId = networkId;
 
     // Contracts
+    this.factRegistry = this.addContract(factRegistryAbi);
     this.starkwarePerpetual = this.addContract(starkwarePerpetualAbi);
     this.collateralToken = this.addContract(usdcAbi);
     this.mintableToken = this.addContract(mintableTokenAbi);
