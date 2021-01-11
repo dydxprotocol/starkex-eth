@@ -7,9 +7,13 @@ import { AbiInput, AbiItem } from 'web3-utils';
 import { Contracts } from '../lib/Contracts';
 import {
   TxResult,
+  LogValue,
+  ParsedLog,
+  ParsedLogArgs,
+  ParsedLogValue,
 } from '../types';
 
-type IContractsByAddress = { [address: string]: Contract };
+type IContractsByAddress = { [address: string]: Contract[] };
 
 export class Logs {
   private contracts: Contracts;
@@ -28,40 +32,44 @@ export class Logs {
     if (!this._contractsByAddress) {
       this._contractsByAddress = {};
       for (const { contract, isTest } of this.contracts.contractsList) {
-        if (!isTest && contract.options.address) {
-          this._contractsByAddress[contract.options.address.toLowerCase()] = contract;
+        const contractAddress = contract?.options?.address?.toLowerCase();
+        if (!isTest && contractAddress) {
+          if (!this._contractsByAddress[contractAddress]) {
+            this._contractsByAddress[contractAddress] = [];
+          }
+          this._contractsByAddress[contractAddress].push(contract);
         }
       }
     }
     return this._contractsByAddress;
   }
 
-  public parseLogs(receipt: TxResult): any[] {
-    let events: any[];
-
+  public parseLogs(receipt: TxResult): ParsedLog[] {
     if (receipt.logs) {
-      events = JSON.parse(JSON.stringify(receipt.logs));
-      return events.map((e) => this.parseLog(e)).filter((l) => !!l);
+      const events: Log[] = JSON.parse(JSON.stringify(receipt.logs));
+      return events
+        .map((e) => this.parseLog(e))
+        .filter(notEmpty);
     }
 
     if (receipt.events) {
-      const tempEvents = JSON.parse(JSON.stringify(receipt.events));
-      events = [];
-      Object.values(tempEvents).forEach((e: any) => {
+      const tempEvents: Log = JSON.parse(JSON.stringify(receipt.events));
+      const events: EventLog[] = [];
+      Object.values(tempEvents).forEach((e: EventLog | EventLog[]) => {
         if (Array.isArray(e)) {
-          e.forEach((ev) => events.push(ev));
+          e.forEach((ev: EventLog) => events.push(ev));
         } else {
           events.push(e);
         }
       });
       events.sort((a, b) => a.logIndex - b.logIndex);
-      return events.map((e) => this.parseEvent(e)).filter((l) => !!l);
+      return events.map((e) => this.parseEvent(e)).filter(notEmpty);
     }
 
     throw new Error('Receipt has no logs');
   }
 
-  private parseEvent(event: EventLog): any {
+  private parseEvent(event: EventLog): ParsedLog | null {
     return this.parseLog({
       address: event.address,
       data: event.raw!.data,
@@ -74,17 +82,28 @@ export class Logs {
     });
   }
 
-  private parseLog(log: Log): any {
+  private parseLog(log: Log): ParsedLog | null {
     const logAddress = log.address.toLowerCase();
+    const contracts: Contract[] | undefined = this.contractsByAddress[logAddress];
 
-    if (logAddress in this.contractsByAddress) {
-      return this.parseLogWithContract(this.contractsByAddress[logAddress], log);
+    if (!contracts) {
+      return null;
+    }
+
+    for (let i = 0; i < contracts.length; i += 1) {
+      const parsedLog = this.parseLogWithContract(contracts[i], log);
+      if (parsedLog) {
+        return parsedLog;
+      }
     }
 
     return null;
   }
 
-  private parseLogWithContract(contract: Contract, log: Log): any {
+  private parseLogWithContract(
+    contract: Contract,
+    log: Log,
+  ): ParsedLog | null {
     const events = contract.options.jsonInterface.filter(
       (e: AbiItem) => e.type === 'event',
     );
@@ -110,8 +129,11 @@ export class Logs {
     };
   }
 
-  private parseArgs(inputs: AbiInput[], eventArgs: any): any {
-    const parsedObject: any = {};
+  private parseArgs(
+    inputs: AbiInput[],
+    eventArgs: { [name: string]: LogValue },
+  ): ParsedLogArgs {
+    const parsedObject: ParsedLogArgs = {};
     for (const input of inputs) {
       const { name } = input;
       parsedObject[name] = this.parseValue(input, eventArgs[name]);
@@ -119,7 +141,10 @@ export class Logs {
     return parsedObject;
   }
 
-  private parseValue(input: AbiInput, argValue: any): any {
+  private parseValue(
+    input: AbiInput,
+    argValue: LogValue,
+  ): ParsedLogValue {
     // TODO: like all other logs except LogDeposit
     if (input.type === 'uint256') {
       // returning everything as strings
@@ -149,5 +174,10 @@ export class Logs {
     }
     throw new Error(`Unknown event arg type ${input.type}`);
   }
+}
 
+function notEmpty<TValue>(
+  value: TValue | null | undefined,
+): value is TValue {
+  return value !== null && value !== undefined;
 }
