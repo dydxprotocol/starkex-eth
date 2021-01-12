@@ -17,7 +17,21 @@ export function starkKeyToUint256(
 export function bignumberableToUint256(
   amount: BigNumberable,
 ): string {
-  return new BigNumber(amount).toFixed(0);
+  const result = new BigNumber(amount);
+
+  // Solidity only takes integers.
+  if (!result.isInteger()) {
+    throw new Error(`Amount cannot be used in contract call: ${result.toFixed()}`);
+  }
+
+  return result.toFixed(0);
+}
+
+export function humanTokenAmountToUint256(
+  humanAmount: BigNumberable,
+  decimals: number,
+): string {
+  return bignumberableToUint256(new BigNumber(humanAmount).shiftedBy(decimals));
 }
 
 export function humanCollateralAmountToUint256(
@@ -30,13 +44,6 @@ export function humanEthAmountToUint256(
   humanAmount: BigNumberable,
 ): string {
   return humanTokenAmountToUint256(humanAmount, ETH_DECIMALS);
-}
-
-export function humanTokenAmountToUint256(
-  humanAmount: BigNumberable,
-  decimals: number,
-): string {
-  return bignumberableToUint256(new BigNumber(humanAmount).shiftedBy(decimals));
 }
 
 // From-Contract Helpers
