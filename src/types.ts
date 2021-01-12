@@ -73,6 +73,8 @@ export interface CallOptions extends TxOptions {
 
 export const BASE_DECIMALS = 6;
 
+export const ETH_DECIMALS = 18;
+
 export interface SignedIntStruct {
   value: string;
   isPositive: boolean;
