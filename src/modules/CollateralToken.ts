@@ -4,6 +4,7 @@ import { Contract } from 'web3-eth-contract';
 import { COLLATERAL_ASSET_ID, INTEGERS } from '../lib/Constants';
 import {
   humanCollateralAmountToUint256,
+  uint256ToHumanCollateralTokenAmount,
 } from '../lib/ContractCallHelpers';
 import { Contracts } from '../lib/Contracts';
 import {
@@ -38,12 +39,12 @@ export class CollateralToken {
       spenderAddress: Address,
     },
     options?: CallOptions,
-  ): Promise<BigNumber> {
+  ): Promise<string> {
     const allowance: string = await this.contracts.call(
       this.token.methods.allowance(ownerAddress, spenderAddress),
       options,
     );
-    return new BigNumber(allowance);
+    return uint256ToHumanCollateralTokenAmount(allowance);
   }
 
   public async getBalance(
@@ -53,22 +54,22 @@ export class CollateralToken {
       ownerAddress: Address,
     },
     options?: CallOptions,
-  ): Promise<BigNumber> {
+  ): Promise<string> {
     const balance: string = await this.contracts.call(
       this.token.methods.balanceOf(ownerAddress),
       options,
     );
-    return new BigNumber(balance);
+    return uint256ToHumanCollateralTokenAmount(balance);
   }
 
   public async getTotalSupply(
     options?: CallOptions,
-  ): Promise<BigNumber> {
+  ): Promise<string> {
     const supply: string = await this.contracts.call(
       this.token.methods.totalSupply(),
       options,
     );
-    return new BigNumber(supply);
+    return uint256ToHumanCollateralTokenAmount(supply);
   }
 
   public async getName(
@@ -91,12 +92,12 @@ export class CollateralToken {
 
   public async getDecimals(
     options?: CallOptions,
-  ): Promise<BigNumber> {
+  ): Promise<number> {
     const decimals: string = await this.contracts.call(
       this.token.methods.decimals(),
       options,
     );
-    return new BigNumber(decimals);
+    return new BigNumber(decimals).toNumber();
   }
 
   public async getExchangeAllowance(
@@ -106,7 +107,7 @@ export class CollateralToken {
       ownerAddress: Address,
     },
     options?: CallOptions,
-  ): Promise<BigNumber> {
+  ): Promise<string> {
     return this.getAllowance(
       {
         ownerAddress,
