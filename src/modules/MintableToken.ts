@@ -1,6 +1,8 @@
-import BigNumber from 'bignumber.js';
 import { Contract } from 'web3-eth-contract';
 
+import {
+  humanCollateralAmountToUint256,
+} from '../lib/ContractCallHelpers';
 import { Contracts } from '../lib/Contracts';
 import {
   Address,
@@ -21,14 +23,19 @@ export class MintableToken {
   }
 
   public async setBalance(
-    address: Address,
-    amount: BigNumberable,
+    {
+      address,
+      humanAmount,
+    }: {
+      address: Address,
+      humanAmount: BigNumberable,
+    },
     options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
       this.token.methods.setBalance(
         address,
-        new BigNumber(amount).toFixed(0),
+        humanCollateralAmountToUint256(humanAmount),
       ),
       options,
     );

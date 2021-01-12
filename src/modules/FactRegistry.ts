@@ -1,5 +1,8 @@
-import BigNumber from 'bignumber.js';
-
+import {
+  bignumberableToUint256,
+  humanEthAmountToUint256,
+  humanTokenAmountToUint256,
+} from '../lib/ContractCallHelpers';
 import { Contracts } from '../lib/Contracts';
 import {
   Address,
@@ -19,36 +22,51 @@ export class FactRegistry {
   }
 
   public async transferETH(
-    recipient: Address,
-    amount: BigNumberable,
-    salt: string,
+    {
+      recipient,
+      humanAmount,
+      salt,
+    }: {
+      recipient: Address,
+      humanAmount: BigNumberable,
+      salt: BigNumberable,
+    },
     options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
       this.contracts.factRegistry.methods.transfer(
         recipient,
-        new BigNumber(salt).toFixed(0),
+        bignumberableToUint256(salt),
       ),
       {
         ...options,
-        value: new BigNumber(amount).toFixed(0),
+        value: humanEthAmountToUint256(humanAmount),
       },
     );
   }
 
   public async transferERC20(
-    recipient: Address,
-    erc20: Address,
-    amount: BigNumberable,
-    salt: string,
+    {
+      recipient,
+      tokenAddress,
+      tokenDecimals,
+      humanAmount,
+      salt,
+    }: {
+      recipient: Address,
+      tokenAddress: Address,
+      tokenDecimals: number,
+      humanAmount: BigNumberable,
+      salt: string,
+    },
     options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
       this.contracts.factRegistry.methods.transferERC20(
         recipient,
-        erc20,
-        new BigNumber(amount).toFixed(0),
-        new BigNumber(salt).toFixed(0),
+        tokenAddress,
+        humanTokenAmountToUint256(humanAmount, tokenDecimals),
+        bignumberableToUint256(salt),
       ),
       options,
     );
@@ -77,7 +95,11 @@ export class FactRegistry {
   }
 
   public async isValid(
-    fact: string,
+    {
+      fact,
+    }: {
+      fact: string,
+    },
     options?: CallOptions,
   ): Promise<boolean> {
     const result = await this.contracts.call(

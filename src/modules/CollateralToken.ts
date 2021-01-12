@@ -2,6 +2,9 @@ import BigNumber from 'bignumber.js';
 import { Contract } from 'web3-eth-contract';
 
 import { COLLATERAL_ASSET_ID, INTEGERS } from '../lib/Constants';
+import {
+  humanCollateralAmountToUint256,
+} from '../lib/ContractCallHelpers';
 import { Contracts } from '../lib/Contracts';
 import {
   BigNumberable,
@@ -27,8 +30,13 @@ export class CollateralToken {
   }
 
   public async getAllowance(
-    ownerAddress: Address,
-    spenderAddress: Address,
+    {
+      ownerAddress,
+      spenderAddress,
+    }: {
+      ownerAddress: Address,
+      spenderAddress: Address,
+    },
     options?: CallOptions,
   ): Promise<BigNumber> {
     const allowance: string = await this.contracts.call(
@@ -39,7 +47,11 @@ export class CollateralToken {
   }
 
   public async getBalance(
-    ownerAddress: Address,
+    {
+      ownerAddress,
+    }: {
+      ownerAddress: Address,
+    },
     options?: CallOptions,
   ): Promise<BigNumber> {
     const balance: string = await this.contracts.call(
@@ -88,110 +100,136 @@ export class CollateralToken {
   }
 
   public async getExchangeAllowance(
-    ownerAddress: Address,
+    {
+      ownerAddress,
+    }: {
+      ownerAddress: Address,
+    },
     options?: CallOptions,
   ): Promise<BigNumber> {
     return this.getAllowance(
-      ownerAddress,
-      this.contracts.starkwarePerpetual.options.address,
+      {
+        ownerAddress,
+        spenderAddress: this.contracts.starkwarePerpetual.options.address,
+      },
       options,
     );
   }
 
   public async setAllowance(
-    ownerAddress: Address,
-    spenderAddress: Address,
-    amount: BigNumberable,
-    options: SendOptions = {},
+    {
+      spenderAddress,
+      humanAmount,
+    }: {
+      spenderAddress: Address,
+      humanAmount: BigNumberable,
+    },
+    options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
       this.token.methods.approve(
         spenderAddress,
-        new BigNumber(amount).toFixed(0),
+        humanCollateralAmountToUint256(humanAmount),
       ),
-      { ...options, from: ownerAddress },
+      options,
     );
   }
 
   public async setExchangeAllowance(
-    ownerAddress: Address,
-    amount: BigNumberable,
-    options: SendOptions = {},
+    {
+      humanAmount,
+    }: {
+      humanAmount: BigNumberable,
+    },
+    options?: SendOptions,
   ): Promise<TxResult> {
     return this.setAllowance(
-      ownerAddress,
-      this.contracts.starkwarePerpetual.options.address,
-      amount,
+      {
+        spenderAddress: this.contracts.starkwarePerpetual.options.address,
+        humanAmount,
+      },
       options,
     );
   }
 
   public async setMaximumAllowance(
-    ownerAddress: Address,
-    spenderAddress: Address,
-    options: SendOptions = {},
-  ): Promise<TxResult> {
-    return this.setAllowance(
-      ownerAddress,
+    {
       spenderAddress,
-      INTEGERS.ONES_255,
+    }: {
+      spenderAddress: Address,
+    },
+    options?: SendOptions,
+  ): Promise<TxResult> {
+    return this.contracts.send(
+      this.token.methods.approve(
+        spenderAddress,
+        INTEGERS.ONES_255,
+      ),
       options,
     );
   }
 
   public async setMaximumExchangeAllowance(
-    ownerAddress: Address,
-    options: SendOptions = {},
+    options?: SendOptions,
   ): Promise<TxResult> {
-    return this.setAllowance(
-      ownerAddress,
-      this.contracts.starkwarePerpetual.options.address,
-      INTEGERS.ONES_255,
+    return this.setMaximumAllowance(
+      {
+        spenderAddress: this.contracts.starkwarePerpetual.options.address,
+      },
       options,
     );
   }
 
   public async unsetExchangeAllowance(
-    ownerAddress: Address,
-    options: SendOptions = {},
+    options?: SendOptions,
   ): Promise<TxResult> {
     return this.setAllowance(
-      ownerAddress,
-      this.contracts.starkwarePerpetual.options.address,
-      INTEGERS.ZERO,
+      {
+        spenderAddress: this.contracts.starkwarePerpetual.options.address,
+        humanAmount: '0',
+      },
       options,
     );
   }
 
   public async transfer(
-    fromAddress: Address,
-    toAddress: Address,
-    amount: BigNumberable,
-    options: SendOptions = {},
+    {
+      toAddress,
+      humanAmount,
+    }: {
+      toAddress: Address,
+      humanAmount: BigNumberable,
+    },
+    options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
       this.token.methods.transfer(
         toAddress,
-        new BigNumber(amount).toFixed(0),
+        humanCollateralAmountToUint256(humanAmount),
       ),
-      { ...options, from: fromAddress },
+      options,
     );
   }
 
   public async transferFrom(
-    fromAddress: Address,
-    toAddress: Address,
-    senderAddress: Address,
-    amount: BigNumberable,
-    options: SendOptions = {},
+    {
+      fromAddress,
+      toAddress,
+      humanAmount,
+    }: {
+      fromAddress: Address,
+      toAddress: Address,
+      humanAmount: BigNumberable,
+    },
+    options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
       this.token.methods.transferFrom(
         fromAddress,
         toAddress,
-        new BigNumber(amount).toFixed(0),
+        humanCollateralAmountToUint256(humanAmount),
       ),
-      { ...options, from: senderAddress },
+      options,
     );
   }
 }
