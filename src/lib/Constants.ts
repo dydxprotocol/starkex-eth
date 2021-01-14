@@ -1,6 +1,8 @@
 import BigNumber from 'bignumber.js';
 
+import usdcAbi from '../contracts/usdc-abi.json';
 import { Networks } from '../types';
+import { getAssetId } from './BytesHelper';
 
 export const INTEGERS = {
   ZERO: new BigNumber(0),
@@ -11,7 +13,8 @@ export const INTEGERS = {
 };
 
 export const COLLATERAL_ASSET_ID = {
-  [Networks.ROPSTEN]: '0x02c04d8b650f44092278a7cb1e1028c82025dff622db96c934b611b84cc8de5a',
+  [Networks.MAINNET]: getAssetId(usdcAbi.networks[1].address),
+  [Networks.ROPSTEN]: getAssetId(usdcAbi.networks[3].address),
 };
 
 export const ADDRESSES = {
