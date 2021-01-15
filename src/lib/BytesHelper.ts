@@ -20,7 +20,7 @@ export function addressesAreEqual(
     (stripHexPrefix(addressOne).toLowerCase() === stripHexPrefix(addressTwo).toLowerCase()));
 }
 
-const ASSET_ID_MASK = new BigNumber(2).pow(251);
+const ASSET_ID_MASK = new BigNumber(2).pow(250);
 
 export function getAssetId(
   tokenAddress: string,
