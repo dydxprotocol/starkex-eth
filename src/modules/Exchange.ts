@@ -7,6 +7,7 @@ import {
   bignumberableToUint256,
   humanCollateralAmountToUint256,
   starkKeyToUint256,
+  uint256ToHumanCollateralTokenAmount,
 } from '../lib/ContractCallHelpers';
 import { Contracts } from '../lib/Contracts';
 import {
@@ -133,6 +134,24 @@ export class Exchange {
       }
       throw e;
     }
+  }
+
+  public async getWithdrawalBalance(
+    {
+      starkKey,
+    }: {
+      starkKey: string,
+    },
+    options?: CallOptions,
+  ): Promise<string> {
+    const result = await this.contracts.call(
+      this.contracts.starkwarePerpetual.methods.getWithdrawalBalance(
+        starkKeyToUint256(starkKey),
+        COLLATERAL_ASSET_ID[this.contracts.networkId],
+      ),
+      options,
+    );
+    return uint256ToHumanCollateralTokenAmount(result);
   }
 
   public async hasCancellationRequest(
