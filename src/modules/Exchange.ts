@@ -145,11 +145,11 @@ export class Exchange {
     options?: CallOptions,
   ): Promise<string> {
     const result = await this.contracts.call(
-        this.contracts.starkwarePerpetual.methods.getWithdrawalBalance(
-          starkKeyToUint256(starkKey),
-          COLLATERAL_ASSET_ID[this.contracts.networkId],
-        ),
-        options,
+      this.contracts.starkwarePerpetual.methods.getWithdrawalBalance(
+        starkKeyToUint256(starkKey),
+        COLLATERAL_ASSET_ID[this.contracts.networkId],
+      ),
+      options,
     );
     return uint256ToHumanCollateralTokenAmount(result);
   }
