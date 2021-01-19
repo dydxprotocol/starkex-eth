@@ -1,5 +1,6 @@
 import {
   bignumberableToUint256,
+  humanCollateralAmountToUint256,
   humanEthAmountToUint256,
   humanTokenAmountToUint256,
 } from '../lib/ContractCallHelpers';
@@ -66,6 +67,29 @@ export class FactRegistry {
         recipient,
         tokenAddress,
         humanTokenAmountToUint256(humanAmount, tokenDecimals),
+        bignumberableToUint256(salt),
+      ),
+      options,
+    );
+  }
+
+  public async transferCollateralToken(
+    {
+      recipient,
+      humanAmount,
+      salt,
+    }: {
+      recipient: Address,
+      humanAmount: BigNumberable,
+      salt: string,
+    },
+    options?: SendOptions,
+  ): Promise<TxResult> {
+    return this.contracts.send(
+      this.contracts.factRegistry.methods.transferERC20(
+        recipient,
+        this.contracts.collateralToken.options.address,
+        humanCollateralAmountToUint256(humanAmount),
         bignumberableToUint256(salt),
       ),
       options,
