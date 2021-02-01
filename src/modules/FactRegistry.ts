@@ -1,3 +1,6 @@
+import Web3 from 'web3';
+
+import { ADDRESSES } from '../lib/Constants';
 import {
   bignumberableToUint256,
   humanCollateralAmountToUint256,
@@ -20,6 +23,54 @@ export class FactRegistry {
     contracts: Contracts,
   ) {
     this.contracts = contracts;
+  }
+
+  public getAddress(): string {
+    return this.contracts.factRegistry.options.address;
+  }
+
+  public getTransferEthFact(
+    {
+      recipient,
+      humanAmount,
+      salt,
+    }: {
+      recipient: Address,
+      humanAmount: BigNumberable,
+      salt: string,
+    },
+  ): string {
+    return this.getTransferErc20Fact({
+      tokenAddress: ADDRESSES.ZERO,
+      tokenDecimals: 18,
+      recipient,
+      humanAmount,
+      salt,
+    });
+  }
+
+  public getTransferErc20Fact(
+    {
+      recipient,
+      tokenAddress,
+      tokenDecimals,
+      humanAmount,
+      salt,
+    }: {
+      recipient: Address,
+      tokenAddress: Address,
+      tokenDecimals: number,
+      humanAmount: BigNumberable,
+      salt: string,
+    },
+  ): string {
+    const result: string | null = Web3.utils.soliditySha3(
+      { type: 'address', value: recipient },
+      { type: 'uint256', value: humanTokenAmountToUint256(humanAmount, tokenDecimals) },
+      { type: 'address', value: tokenAddress },
+      { type: 'uint256', value: bignumberableToUint256(salt) },
+    );
+    return result as string;
   }
 
   public async transferETH(
