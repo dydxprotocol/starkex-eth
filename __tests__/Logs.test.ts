@@ -18,7 +18,7 @@ const defaultLog = {
   blockNumber,
 };
 
-describe('StarwareLib#initiate', () => {
+describe('Logs', () => {
 
   beforeAll(() => {
     starkwareLib = new StarkwareLib(dummyProvider, Networks.ROPSTEN);

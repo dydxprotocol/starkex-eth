@@ -27,6 +27,10 @@ export class Exchange {
     this.contracts = contracts;
   }
 
+  public getAddress(): string {
+    return this.contracts.starkwarePerpetual.options.address;
+  }
+
   public async register(
     {
       ethAddress,

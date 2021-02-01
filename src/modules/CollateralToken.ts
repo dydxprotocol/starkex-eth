@@ -26,6 +26,10 @@ export class CollateralToken {
     this.token = contracts.collateralToken;
   }
 
+  public getAddress(): string {
+    return this.contracts.collateralToken.options.address;
+  }
+
   public getAssetId(): string {
     return COLLATERAL_ASSET_ID[this.contracts.networkId];
   }
