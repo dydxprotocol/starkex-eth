@@ -44,10 +44,11 @@ export interface StarkwareLibOptions {
 }
 
 export enum ConfirmationType {
-  Hash = 0,
-  Confirmed = 1,
-  Both = 2,
-  Simulate = 3,
+  Hash = 'Hash',
+  Confirmed = 'Confirmed',
+  Both = 'Both',
+  Simulate = 'Simulate',
+  Sender = 'Sender',
 }
 
 export interface TxOptions {

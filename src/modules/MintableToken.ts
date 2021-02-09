@@ -33,6 +33,7 @@ export class MintableToken {
     options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
+      this.token,
       this.token.methods.setBalance(
         address,
         humanCollateralAmountToUint256(humanAmount),

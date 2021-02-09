@@ -132,6 +132,7 @@ export class CollateralToken {
     options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
+      this.token,
       this.token.methods.approve(
         spenderAddress,
         humanCollateralAmountToUint256(humanAmount),
@@ -166,6 +167,7 @@ export class CollateralToken {
     options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
+      this.token,
       this.token.methods.approve(
         spenderAddress,
         INTEGERS.ONES_255,
@@ -208,6 +210,7 @@ export class CollateralToken {
     options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
+      this.token,
       this.token.methods.transfer(
         toAddress,
         humanCollateralAmountToUint256(humanAmount),
@@ -229,6 +232,7 @@ export class CollateralToken {
     options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
+      this.token,
       this.token.methods.transferFrom(
         fromAddress,
         toAddress,
