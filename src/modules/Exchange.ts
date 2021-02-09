@@ -44,6 +44,7 @@ export class Exchange {
     options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
+      this.contracts.starkwarePerpetual,
       this.contracts.starkwarePerpetual.methods.registerUser(
         ethAddress,
         starkKeyToUint256(starkKey),
@@ -67,6 +68,7 @@ export class Exchange {
   ): Promise<TxResult> {
     const depositFunctionSignature = 'deposit(uint256,uint256,uint256,uint256)';
     return this.contracts.send(
+      this.contracts.starkwarePerpetual,
       this.contracts.starkwarePerpetual.methods[depositFunctionSignature](
         starkKeyToUint256(starkKey),
         COLLATERAL_ASSET_ID[this.contracts.networkId],
@@ -86,6 +88,7 @@ export class Exchange {
     options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
+      this.contracts.starkwarePerpetual,
       this.contracts.starkwarePerpetual.methods.withdraw(
         starkKeyToUint256(starkKey),
         COLLATERAL_ASSET_ID[this.contracts.networkId],
@@ -105,6 +108,7 @@ export class Exchange {
     options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
+      this.contracts.starkwarePerpetual,
       this.contracts.starkwarePerpetual.methods.withdrawTo(
         starkKeyToUint256(starkKey),
         COLLATERAL_ASSET_ID[this.contracts.networkId],

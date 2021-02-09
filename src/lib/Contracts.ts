@@ -15,6 +15,7 @@
     limitations under the License.
 
 */
+import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 import Web3 from 'web3';
 import {
@@ -141,6 +142,7 @@ export class Contracts {
   }
 
   public async send(
+    contract: Contract,
     method: ContractSendMethod,
     specificOptions: SendOptions = {},
   ): Promise<TxResult> {
@@ -149,7 +151,11 @@ export class Contracts {
       ...specificOptions,
     };
 
-    const result = await this._send(method, sendOptions);
+    const result = await this._send(
+      contract,
+      method,
+      sendOptions,
+    );
     return result;
   }
 
@@ -178,19 +184,18 @@ export class Contracts {
   }
 
   private async _send( // tslint:disable-line:function-name
+    contract: Contract,
     method: ContractSendMethod,
     sendOptions: SendOptions = {},
   ): Promise<TxResult> {
     const {
       confirmations,
-      confirmationType: confirm2,
+      confirmationType,
       gasMultiplier,
       ...txOptions
     } = sendOptions;
 
-    const confirmationType: ConfirmationType = confirm2!;
-
-    if (!Object.values(ConfirmationType).includes(confirmationType!)) {
+    if (confirmationType && !Object.values(ConfirmationType).includes(confirmationType)) {
       throw new Error(`Invalid confirmation type: ${confirmationType}`);
     }
 
@@ -206,18 +211,65 @@ export class Contracts {
       }
     }
 
+    let hashOutcome = OUTCOMES.INITIAL;
+    let confirmationOutcome = OUTCOMES.INITIAL;
+
+    if (confirmationType === ConfirmationType.Sender) {
+      const data: string = method.encodeABI();
+      const from: string | null = txOptions.from || this.web3.defaultAccount;
+
+      if (from === null) {
+        throw new Error('Cannot sendTransaction with from=null');
+      }
+      if (_.isNil(txOptions.nonce)) {
+        throw new Error('Cannot sendTransaction with nonce=null');
+      }
+      const nonceIsHexString: boolean = (typeof txOptions.nonce === 'string') &&
+        (txOptions.nonce as string).includes('0x');
+      const nonceBn: BigNumber = new BigNumber(txOptions.nonce, nonceIsHexString ? 16 : 10);
+
+      const stPromi: PromiEvent<TransactionReceipt> = this.web3.eth.sendTransaction({
+        gas: txOptions.gas,
+        value: txOptions.value,
+        gasPrice: txOptions.gasPrice,
+        to: contract.options.address,
+        from,
+        nonce: nonceBn.toNumber(),
+        data,
+      });
+
+      const stPromise = new Promise(
+        (resolve, reject) => {
+          stPromi.on('error', (error: Error) => {
+            if (hashOutcome === OUTCOMES.INITIAL) {
+              hashOutcome = OUTCOMES.REJECTED;
+              reject(error);
+              (stPromi as any).off();
+            }
+          });
+
+          stPromi.on('transactionHash', (txHash: string) => {
+            if (hashOutcome === OUTCOMES.INITIAL) {
+              hashOutcome = OUTCOMES.RESOLVED;
+              resolve(txHash);
+              (stPromi as any).off();
+            }
+          });
+        },
+      );
+      const stResult = await stPromise;
+      return this.normalizeResponse({ transactionHash: stResult });
+    }
+
     const promi: PromiEvent<Contract> | any = method.send(
       this.toNativeSendOptions(txOptions) as any,
     );
-
-    let hashOutcome = OUTCOMES.INITIAL;
-    let confirmationOutcome = OUTCOMES.INITIAL;
 
     let transactionHash: string | any;
     let hashPromise: Promise<string>;
     let confirmationPromise: Promise<TransactionReceipt> | any;
 
-    if ([
+    if (confirmationType && [
       ConfirmationType.Hash,
       ConfirmationType.Both,
     ].includes(confirmationType)) {
@@ -245,7 +297,7 @@ export class Contracts {
       transactionHash = await hashPromise;
     }
 
-    if ([
+    if (confirmationType && [
       ConfirmationType.Confirmed,
       ConfirmationType.Both,
     ].includes(confirmationType)) {

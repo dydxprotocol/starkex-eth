@@ -86,6 +86,7 @@ export class FactRegistry {
     options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
+      this.contracts.factRegistry,
       this.contracts.factRegistry.methods.transfer(
         recipient,
         bignumberableToUint256(salt),
@@ -114,6 +115,7 @@ export class FactRegistry {
     options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
+      this.contracts.factRegistry,
       this.contracts.factRegistry.methods.transferERC20(
         recipient,
         tokenAddress,
@@ -137,6 +139,7 @@ export class FactRegistry {
     options?: SendOptions,
   ): Promise<TxResult> {
     return this.contracts.send(
+      this.contracts.factRegistry,
       this.contracts.factRegistry.methods.transferERC20(
         recipient,
         this.contracts.collateralToken.options.address,
