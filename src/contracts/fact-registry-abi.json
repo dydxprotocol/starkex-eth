@@ -1,4 +1,14 @@
 {
+  "networks": {
+    "1": {
+      "links": {},
+      "address": "0x0000000000000000000000000000000000000000"
+    },
+    "3": {
+      "links": {},
+      "address": "0x8Fb814935f7E63DEB304B500180e19dF5167B50e"
+    }
+  },
   "abi":   [
      {
         "anonymous":false,
@@ -140,15 +150,5 @@
         "stateMutability":"nonpayable",
         "type":"function"
      }
-  ],
-  "networks": {
-    "1": {
-      "links": {},
-      "address": "0x0000000000000000000000000000000000000000"
-    },
-    "3": {
-      "links": {},
-      "address": "0x8Fb814935f7E63DEB304B500180e19dF5167B50e"
-    }
-  }
+  ]
 }
