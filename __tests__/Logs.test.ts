@@ -79,4 +79,37 @@ describe('Logs', () => {
     expect(logs.length).toEqual(0);
     expect(logs).toEqual([]);
   });
+
+  it('Parses boolean values correctly', () => {
+    const hardTradeLog = {
+      ...defaultLog,
+      logIndex: 1,
+      address: starkwareLib.contracts.starkwarePerpetual.options.address,
+      data: '0x000000000000000000000000000000000000000000000000000000000000303900000000000000000000000000000000000000000000000000000000000087070000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000007d000000000000000000000000000000000000000000000000000000000000012c00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000005',
+      topics: [
+        '0x79acb9227c98b68d7628d2c99a7719926eff77e8c2275f6ffe7cf255b32772be',
+      ],
+    };
+    const logs = starkwareLib.logs.parseLogs({
+      logs: [hardTradeLog],
+    });
+    expect(logs).toEqual([
+      {
+        ...hardTradeLog,
+        name: 'LogForcedTradeRequest',
+        args: {
+          aIsBuyingSynthetic: true,
+          amountCollateral: '125',
+          amountSynthetic: '300',
+          collateralAssetId: '0',
+          nonce: '5',
+          starkKeyA: '12345',
+          starkKeyB: '34567',
+          syntheticAssetId: '1',
+          vaultIdA: '1',
+          vaultIdB: '2',
+        },
+      },
+    ]);
+  });
 });
