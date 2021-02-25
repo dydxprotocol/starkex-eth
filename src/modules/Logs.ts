@@ -170,7 +170,7 @@ export class Logs {
       return argValue;
     }
     if (input.type.match(/^uint[0-9]*$/)) {
-      return new BigNumber(argValue);
+      return new BigNumber(argValue as string);
     }
     throw new Error(`Unknown event arg type ${input.type}`);
   }

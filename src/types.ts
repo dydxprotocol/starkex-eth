@@ -9,8 +9,8 @@ export type Address = string;
 export type Integer = BigNumber;
 export type Decimal = BigNumber;
 export type BigNumberable = BigNumber | string | number;
-export type LogValue = string | number;
-export type ParsedLogValue = BigNumber | string | number;
+export type LogValue = string | number | boolean;
+export type ParsedLogValue = BigNumber | string | number | boolean;
 
 export const Networks = {
   MAINNET: 1,
