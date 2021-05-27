@@ -54,6 +54,36 @@ export class Exchange {
     );
   }
 
+  public async registerAndDeposit(
+    {
+      ethAddress,
+      starkKey,
+      signature,
+      positionId,
+      humanAmount,
+    }: {
+      ethAddress: Address,
+      starkKey: string,
+      signature: string,
+      positionId: BigNumberable,
+      humanAmount: BigNumberable,
+    },
+    options?: SendOptions,
+  ): Promise<TxResult> {
+    return this.contracts.send(
+      this.contracts.starkwarePerpetual,
+      this.contracts.starkwarePerpetual.methods.registerAndDepositERC20(
+        ethAddress,
+        starkKeyToUint256(starkKey),
+        signature,
+        COLLATERAL_ASSET_ID[this.contracts.networkId],
+        bignumberableToUint256(positionId),
+        humanCollateralAmountToUint256(humanAmount),
+      ),
+      options,
+    );
+  }
+
   public async deposit(
     {
       starkKey,
