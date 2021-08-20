@@ -81,7 +81,7 @@ export class Contracts {
     this.web3 = web3;
     this.defaultOptions = {
       gas: null,
-      gasPrice: 1000000000,
+      gasPrice: undefined,
       value: 0,
       from: null,
       confirmations: 0,
