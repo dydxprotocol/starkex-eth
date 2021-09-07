@@ -31,9 +31,9 @@ import {
 
 import factRegistryAbi from '../contracts/fact-registry-abi.json';
 import mintableTokenAbi from '../contracts/mintable-token-abi.json';
+import proxyDepositAbi from '../contracts/proxy-deposit-abi.json';
 import starkwarePerpetualAbi from '../contracts/starkware-perpetual-abi.json';
 import usdcAbi from '../contracts/usdc-abi.json';
-import proxyDepositAbi from '../contracts/proxy-deposit-abi.json';
 // Contracts
 import {
   TxResult,
