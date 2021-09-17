@@ -13,12 +13,12 @@
     {
       "inputs": [
         {
-          "internalType": "address",
+          "internalType": "contract I_StarkwareContract",
           "name": "starkwareContractAddress",
           "type": "address"
         },
         {
-          "internalType": "address",
+          "internalType": "contract IERC20",
           "name": "usdcAddress",
           "type": "address"
         },
@@ -90,7 +90,20 @@
     {
       "inputs": [
         {
-          "internalType": "address",
+          "internalType": "bytes32",
+          "name": "c__0x85451d11",
+          "type": "bytes32"
+        }
+      ],
+      "name": "c_0x85451d11",
+      "outputs": [],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IERC20",
           "name": "tokenFrom",
           "type": "address"
         },
@@ -100,7 +113,7 @@
           "type": "uint256"
         },
         {
-          "internalType": "address",
+          "internalType": "contract I_ExchangeWrapper",
           "name": "exchangeWrapper",
           "type": "address"
         },

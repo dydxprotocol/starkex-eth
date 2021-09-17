@@ -37,6 +37,18 @@ export function getAssetId(
   return `0x${result.toString(16).padStart(64, '0')}`;
 }
 
+export function encode(address: string, callData: string): string {
+  const encodedAddress = ethers.utils.defaultAbiCoder.encode(
+    ['address'],
+    [address],
+  );
+  return combineHexStrings(encodedAddress, callData);
+}
+
+function combineHexStrings(...args: string[]): string {
+  return `0x${args.map(stripHexPrefix).join('')}`;
+}
+
 function soliditySha3(
   ...input: any
 ): string {
