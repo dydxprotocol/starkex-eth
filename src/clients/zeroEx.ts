@@ -5,16 +5,20 @@ export async function getZeroExSwapQuote({
   sellTokenAddress,
   buyTokenAddress,
   slippagePercentage,
+  isProduction,
 }: {
   sellAmount: string,
   sellTokenAddress: string,
   buyTokenAddress: string,
   slippagePercentage: string,
+  isProduction: boolean,
 }): Promise<{ to: string, data: string, buyAmount: string }> {
   return axiosRequest({
     method: 'GET',
     url: generateQueryPath(
-      'https://api.0x.org/swap/v1/quote',
+      isProduction
+        ? 'https://api.0x.org/swap/v1/quote'
+        : 'https://ropsten.api.0x.org/swap/v1/quote',
       {
         sellAmount,
         sellToken: sellTokenAddress,

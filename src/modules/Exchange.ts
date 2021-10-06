@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 import { getZeroExSwapQuote } from '../clients/zeroEx';
 import { encode } from '../lib/BytesHelper';
 import {
-  COLLATERAL_ASSET_ID,
+  COLLATERAL_ASSET_ID, USDC_ADDRES_PRODUCTION, USDC_ADDRES_STAGING,
 } from '../lib/Constants';
 import {
   bignumberableToUint256,
@@ -139,9 +139,10 @@ export class Exchange {
         sellAmount,
         sellTokenAddress,
         buyTokenAddress: isProduction
-          ? '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
-          : '0x8707a5bf4c2842d46b31a405ba41b858c0f876c4',
+          ? USDC_ADDRES_PRODUCTION
+          : USDC_ADDRES_STAGING,
         slippagePercentage,
+        isProduction,
       },
     );
 
@@ -181,9 +182,10 @@ export class Exchange {
         sellAmount,
         sellTokenAddress,
         buyTokenAddress: isProduction
-          ? '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
-          : '0x8707a5bf4c2842d46b31a405ba41b858c0f876c4',
+          ? USDC_ADDRES_PRODUCTION
+          : USDC_ADDRES_STAGING,
         slippagePercentage,
+        isProduction,
       },
     );
 
