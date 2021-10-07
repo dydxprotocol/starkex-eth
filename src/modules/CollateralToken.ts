@@ -241,4 +241,19 @@ export class CollateralToken {
       options,
     );
   }
+
+  public async isBlacklisted(
+    {
+      address,
+    }: {
+      address: Address,
+    },
+    options?: CallOptions,
+  ): Promise<boolean> {
+    const result: boolean = await this.contracts.call(
+      this.token.methods.isBlacklisted(address),
+      options,
+    );
+    return result;
+  }
 }
