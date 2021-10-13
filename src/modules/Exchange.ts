@@ -1,9 +1,10 @@
 import BigNumber from 'bignumber.js';
 
-import { getZeroExSwapQuote } from '../clients/zeroEx';
-import { encode } from '../lib/BytesHelper';
+import { getZeroExSwapQuote, validateSlippage } from '../clients/zeroEx';
 import {
-  COLLATERAL_ASSET_ID, USDC_ADDRES_PRODUCTION, USDC_ADDRES_STAGING,
+  COLLATERAL_ASSET_ID,
+  USDC_ADDRESS_MAINNET,
+  DYDX_USDC_ADDRESS_ROPSTEN,
 } from '../lib/Constants';
 import {
   bignumberableToUint256,
@@ -131,18 +132,20 @@ export class Exchange {
     },
     options?: SendOptions,
   ): Promise<TxResult> {
+    validateSlippage(slippagePercentage);
+
     const sellAmount: string = humanCollateralAmountToUint256(humanSellAmount);
-    const isProduction: boolean = this.contracts.networkId === 1;
+    const isMainnet: boolean = this.contracts.networkId === 1;
 
     const zeroExRequest = await getZeroExSwapQuote(
       {
         sellAmount,
         sellTokenAddress,
-        buyTokenAddress: isProduction
-          ? USDC_ADDRES_PRODUCTION
-          : USDC_ADDRES_STAGING,
+        buyTokenAddress: isMainnet
+          ? USDC_ADDRESS_MAINNET
+          : DYDX_USDC_ADDRESS_ROPSTEN,
         slippagePercentage,
-        isProduction,
+        isMainnet,
       },
     );
 
@@ -152,12 +155,12 @@ export class Exchange {
       this.contracts.proxyDepositContract.methods[proxyDepositFunctionSignature](
         sellTokenAddress,
         sellAmount,
-        isProduction
+        isMainnet
           ? 'placeholder for zeroExExchange wrapper'
           : 'placeholder for zeroExExchange wrapper',
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
-        encode(zeroExRequest.to, zeroExRequest.data),
+        zeroExRequest.data,
       ),
       options,
     );
@@ -174,18 +177,20 @@ export class Exchange {
       slippagePercentage?: string,
     },
   ): Promise<string> {
+    validateSlippage(slippagePercentage);
+
     const sellAmount: string = humanCollateralAmountToUint256(humanSellAmount);
-    const isProduction: boolean = this.contracts.networkId === 1;
+    const isMainnet: boolean = this.contracts.networkId === 1;
 
     const zeroExRequest = await getZeroExSwapQuote(
       {
         sellAmount,
         sellTokenAddress,
-        buyTokenAddress: isProduction
-          ? USDC_ADDRES_PRODUCTION
-          : USDC_ADDRES_STAGING,
+        buyTokenAddress: isMainnet
+          ? USDC_ADDRESS_MAINNET
+          : DYDX_USDC_ADDRESS_ROPSTEN,
         slippagePercentage,
-        isProduction,
+        isMainnet,
       },
     );
 

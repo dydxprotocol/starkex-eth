@@ -1,22 +1,23 @@
 import { axiosRequest, generateQueryPath } from '@dydxprotocol/node-service-base';
+import Big from 'big.js';
 
 export async function getZeroExSwapQuote({
   sellAmount,
   sellTokenAddress,
   buyTokenAddress,
   slippagePercentage,
-  isProduction,
+  isMainnet,
 }: {
   sellAmount: string,
   sellTokenAddress: string,
   buyTokenAddress: string,
   slippagePercentage: string,
-  isProduction: boolean,
+  isMainnet: boolean,
 }): Promise<{ to: string, data: string, buyAmount: string }> {
   return axiosRequest({
     method: 'GET',
     url: generateQueryPath(
-      isProduction
+      isMainnet
         ? 'https://api.0x.org/swap/v1/quote'
         : 'https://ropsten.api.0x.org/swap/v1/quote',
       {
@@ -27,4 +28,11 @@ export async function getZeroExSwapQuote({
       },
     ),
   }) as Promise<{ to: string, data: string, buyAmount: string }>;
+}
+
+export function validateSlippage(slippage: string) {
+  const slippageBig: Big = Big(slippage);
+  if (slippageBig.lt(0) || slippageBig.gt(100)) {
+    throw Error(`Slippage: ${slippage} is not a valid percent from 0 to 100`);
+  }
 }
