@@ -18,10 +18,14 @@ export async function getZeroExSwapQuote({
 }: {
   sellAmount: string,
   sellTokenAddress: string,
-  buyTokenAddress: string,
+  buyTokenAddress: string | undefined,
   slippagePercentage: string,
   networkId: number,
 }): Promise<{ to: string, data: string, buyAmount: string }> {
+  if (buyTokenAddress === undefined) {
+    throw new Error(`No buyTokenAddress with networkId: ${networkId}`);
+  }
+
   return axiosRequest({
     method: 'GET',
     url: generateQueryPath(

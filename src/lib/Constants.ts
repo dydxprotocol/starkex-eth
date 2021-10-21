@@ -27,3 +27,5 @@ export const USDC_ADDRESSES: {[networkId: number]: string } = {
   [Networks.ROPSTEN]: ADDRESSES.DYDX_USDC_ADDRESS_ROPSTEN,
   [Networks.MAINNET]: ADDRESSES.USDC_ADDRESS_MAINNET,
 };
+
+export const USDC_DECIMALS: number = 6;

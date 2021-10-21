@@ -5,6 +5,7 @@ import { getZeroExSwapQuote, validateSlippage } from '../clients/zeroEx';
 import {
   COLLATERAL_ASSET_ID,
   USDC_ADDRESSES,
+  USDC_DECIMALS,
 } from '../lib/Constants';
 import {
   bignumberableToUint256,
@@ -148,13 +149,12 @@ export class Exchange {
 
     const proxyDepositFunctionSignature = 'deposit(address,uint256,address,uint256,uint256,bytes)';
 
-    const isMainnet: boolean = this.contracts.networkId === 1;
     return this.contracts.send(
       this.contracts.proxyDepositContract,
       this.contracts.proxyDepositContract.methods[proxyDepositFunctionSignature](
         sellTokenAddress,
         sellAmount,
-        isMainnet
+        this.contracts.networkId === 1
           ? 'placeholder for zeroExExchange wrapper'
           : 'placeholder for zeroExExchange wrapper',
         starkKeyToUint256(starkKey),
@@ -191,7 +191,7 @@ export class Exchange {
     );
 
     const usdcAmount: Big = Big(zeroExRequest.buyAmount);
-    usdcAmount.e -= 6;
+    usdcAmount.e -= USDC_DECIMALS;
     return usdcAmount.toString();
   }
 
