@@ -1,10 +1,10 @@
+import Big from 'big.js';
 import BigNumber from 'bignumber.js';
 
 import { getZeroExSwapQuote, validateSlippage } from '../clients/zeroEx';
 import {
   COLLATERAL_ASSET_ID,
-  USDC_ADDRESS_MAINNET,
-  DYDX_USDC_ADDRESS_ROPSTEN,
+  USDC_ADDRESSES,
 } from '../lib/Constants';
 import {
   bignumberableToUint256,
@@ -30,7 +30,7 @@ export class Exchange {
     this.contracts = contracts;
   }
 
-  public getStarkwareAddress(): string {
+  public getAddress(): string {
     return this.contracts.starkwarePerpetual.options.address;
   }
 
@@ -135,21 +135,20 @@ export class Exchange {
     validateSlippage(slippagePercentage);
 
     const sellAmount: string = humanCollateralAmountToUint256(humanSellAmount);
-    const isMainnet: boolean = this.contracts.networkId === 1;
 
     const zeroExRequest = await getZeroExSwapQuote(
       {
         sellAmount,
         sellTokenAddress,
-        buyTokenAddress: isMainnet
-          ? USDC_ADDRESS_MAINNET
-          : DYDX_USDC_ADDRESS_ROPSTEN,
+        buyTokenAddress: USDC_ADDRESSES[this.contracts.networkId],
         slippagePercentage,
-        isMainnet,
+        networkId: this.contracts.networkId,
       },
     );
 
     const proxyDepositFunctionSignature = 'deposit(address,uint256,address,uint256,uint256,bytes)';
+
+    const isMainnet: boolean = this.contracts.networkId === 1;
     return this.contracts.send(
       this.contracts.proxyDepositContract,
       this.contracts.proxyDepositContract.methods[proxyDepositFunctionSignature](
@@ -166,7 +165,7 @@ export class Exchange {
     );
   }
 
-  public async predictedProxyDepositOutput(
+  public async estimateDepositConversionAmount(
     {
       humanSellAmount,
       sellTokenAddress,
@@ -180,21 +179,20 @@ export class Exchange {
     validateSlippage(slippagePercentage);
 
     const sellAmount: string = humanCollateralAmountToUint256(humanSellAmount);
-    const isMainnet: boolean = this.contracts.networkId === 1;
 
     const zeroExRequest = await getZeroExSwapQuote(
       {
         sellAmount,
         sellTokenAddress,
-        buyTokenAddress: isMainnet
-          ? USDC_ADDRESS_MAINNET
-          : DYDX_USDC_ADDRESS_ROPSTEN,
+        buyTokenAddress: USDC_ADDRESSES[this.contracts.networkId],
         slippagePercentage,
-        isMainnet,
+        networkId: this.contracts.networkId,
       },
     );
 
-    return zeroExRequest.buyAmount;
+    const usdcAmount: Big = Big(zeroExRequest.buyAmount);
+    usdcAmount.e -= 6;
+    return usdcAmount.toString();
   }
 
   public async withdraw(

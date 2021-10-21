@@ -1,25 +1,31 @@
-import { axiosRequest, generateQueryPath } from '@dydxprotocol/node-service-base';
 import Big from 'big.js';
+
+import { axiosRequest } from '../lib/axios/axios';
+import { generateQueryPath } from '../lib/axios/request-helpers';
+import { Networks } from '../types';
+
+const zeroExUrlMap: { [networkId: number]: string } = {
+  [Networks.MAINNET]: 'https://api.0x.org/swap/v1/quote',
+  [Networks.ROPSTEN]: 'https://ropsten.api.0x.org/swap/v1/quote',
+};
 
 export async function getZeroExSwapQuote({
   sellAmount,
   sellTokenAddress,
   buyTokenAddress,
   slippagePercentage,
-  isMainnet,
+  networkId,
 }: {
   sellAmount: string,
   sellTokenAddress: string,
   buyTokenAddress: string,
   slippagePercentage: string,
-  isMainnet: boolean,
+  networkId: number,
 }): Promise<{ to: string, data: string, buyAmount: string }> {
   return axiosRequest({
     method: 'GET',
     url: generateQueryPath(
-      isMainnet
-        ? 'https://api.0x.org/swap/v1/quote'
-        : 'https://ropsten.api.0x.org/swap/v1/quote',
+      zeroExUrlMap[networkId],
       {
         sellAmount,
         sellToken: sellTokenAddress,
