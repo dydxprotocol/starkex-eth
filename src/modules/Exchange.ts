@@ -239,7 +239,7 @@ export class Exchange {
     return !new BigNumber(result).isZero();
   }
 
-  public async getForcedWithdrawalRequest(
+  public async hasForcedWithdrawalRequest(
     {
       starkKey,
       positionId,
@@ -250,8 +250,8 @@ export class Exchange {
       quantizedAmount: BigNumberable,
     },
     options?: CallOptions,
-  ): Promise<TxResult> {
-    return this.contracts.call(
+  ): Promise<boolean> {
+    const result = await this.contracts.call(
       this.contracts.starkwarePerpetual.methods.getForcedWithdrawalRequest(
         starkKey,
         positionId,
@@ -259,5 +259,6 @@ export class Exchange {
       ),
       options,
     );
+    return !new BigNumber(result).isZero();
   }
 }
