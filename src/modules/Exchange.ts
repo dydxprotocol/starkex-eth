@@ -148,6 +148,29 @@ export class Exchange {
     );
   }
 
+  public async getForcedWithdrawalRequest(
+    {
+      starkKey,
+      vaultId,
+      quantizedAmount,
+    }: {
+      starkKey: string,
+      vaultId: string,
+      quantizedAmount: BigNumberable,
+    },
+    options?: SendOptions,
+  ): Promise<TxResult> {
+    return this.contracts.send(
+      this.contracts.starkwarePerpetual,
+      this.contracts.starkwarePerpetual.methods.getForcedWithdrawalRequest(
+        starkKey,
+        vaultId,
+        quantizedAmount,
+      ),
+      options,
+    );
+  }
+
   // ============ Getters ============
 
   public async getEthKey(
