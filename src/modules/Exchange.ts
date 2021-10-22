@@ -148,6 +148,32 @@ export class Exchange {
     );
   }
 
+  public async forcedWithdrawalRequest(
+    {
+      starkKey,
+      positionId,
+      humanAmount,
+      premiumCost,
+    }: {
+      starkKey: string,
+      positionId: BigNumberable,
+      humanAmount: BigNumberable,
+      premiumCost: boolean,
+    },
+    options?: SendOptions,
+  ): Promise<TxResult> {
+    return this.contracts.send(
+      this.contracts.starkwarePerpetual,
+      this.contracts.starkwarePerpetual.methods.forcedWithdrawalRequest(
+        starkKeyToUint256(starkKey),
+        bignumberableToUint256(positionId),
+        humanCollateralAmountToUint256(humanAmount),
+        premiumCost,
+      ),
+      options,
+    );
+  }
+
   // ============ Getters ============
 
   public async getEthKey(
@@ -207,6 +233,29 @@ export class Exchange {
         starkKeyToUint256(starkKey),
         COLLATERAL_ASSET_ID[this.contracts.networkId],
         bignumberableToUint256(vaultId),
+      ),
+      options,
+    );
+    return !new BigNumber(result).isZero();
+  }
+
+  public async hasForcedWithdrawalRequest(
+    {
+      starkKey,
+      positionId,
+      humanAmount,
+    }: {
+      starkKey: string,
+      positionId: BigNumberable,
+      humanAmount: BigNumberable,
+    },
+    options?: CallOptions,
+  ): Promise<boolean> {
+    const result = await this.contracts.call(
+      this.contracts.starkwarePerpetual.methods.getForcedWithdrawalRequest(
+        starkKeyToUint256(starkKey),
+        bignumberableToUint256(positionId),
+        humanCollateralAmountToUint256(humanAmount),
       ),
       options,
     );
