@@ -148,29 +148,6 @@ export class Exchange {
     );
   }
 
-  public async getForcedWithdrawalRequest(
-    {
-      starkKey,
-      vaultId,
-      quantizedAmount,
-    }: {
-      starkKey: string,
-      vaultId: string,
-      quantizedAmount: BigNumberable,
-    },
-    options?: SendOptions,
-  ): Promise<TxResult> {
-    return this.contracts.send(
-      this.contracts.starkwarePerpetual,
-      this.contracts.starkwarePerpetual.methods.getForcedWithdrawalRequest(
-        starkKey,
-        vaultId,
-        quantizedAmount,
-      ),
-      options,
-    );
-  }
-
   public async forcedWithdrawalRequest(
     {
       starkKey,
@@ -260,5 +237,27 @@ export class Exchange {
       options,
     );
     return !new BigNumber(result).isZero();
+  }
+
+  public async getForcedWithdrawalRequest(
+    {
+      starkKey,
+      vaultId,
+      quantizedAmount,
+    }: {
+      starkKey: string,
+      vaultId: string,
+      quantizedAmount: BigNumberable,
+    },
+    options?: CallOptions,
+  ): Promise<TxResult> {
+    return this.contracts.call(
+      this.contracts.starkwarePerpetual.methods.getForcedWithdrawalRequest(
+        starkKey,
+        vaultId,
+        quantizedAmount,
+      ),
+      options,
+    );
   }
 }
