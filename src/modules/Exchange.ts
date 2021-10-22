@@ -261,5 +261,4 @@ export class Exchange {
     );
     return !new BigNumber(result).isZero();
   }
-
 }
