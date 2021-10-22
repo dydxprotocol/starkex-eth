@@ -9,7 +9,7 @@ const zeroExUrlMap: { [networkId: number]: string } = {
   [Networks.ROPSTEN]: 'https://ropsten.api.0x.org/swap/v1/quote',
 };
 
-export async function getZeroExSwapQuote({
+export async function getZeroExERC20SwapQuote({
   sellAmount,
   sellTokenAddress,
   buyTokenAddress,
@@ -38,6 +38,35 @@ export async function getZeroExSwapQuote({
       },
     ),
   }) as Promise<{ to: string, data: string, buyAmount: string }>;
+}
+
+export async function getZeroExETHSwapQuote({
+  buyAmount,
+  buyTokenAddress,
+  slippagePercentage,
+  networkId,
+}: {
+  buyAmount: string,
+  buyTokenAddress: string | undefined,
+  slippagePercentage: string,
+  networkId: number,
+}): Promise<{ to: string, data: string, value: number }> {
+  if (buyTokenAddress === undefined) {
+    throw new Error(`No buyTokenAddress with networkId: ${networkId}`);
+  }
+
+  return axiosRequest({
+    method: 'GET',
+    url: generateQueryPath(
+      zeroExUrlMap[networkId],
+      {
+        buyAmount,
+        sellToken: 'ETH',
+        buyToken: buyTokenAddress,
+        slippagePercentage,
+      },
+    ),
+  }) as Promise<{ to: string, data: string, value: number }>;
 }
 
 export function validateSlippage(slippage: string) {
