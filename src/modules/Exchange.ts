@@ -165,7 +165,7 @@ export class Exchange {
     return this.contracts.send(
       this.contracts.starkwarePerpetual,
       this.contracts.starkwarePerpetual.methods.forcedWithdrawalRequest(
-        starkKey,
+        starkKeyToUint256(starkKey),
         positionId,
         quantizedAmount,
         premiumCost
@@ -253,7 +253,7 @@ export class Exchange {
   ): Promise<boolean> {
     const result = await this.contracts.call(
       this.contracts.starkwarePerpetual.methods.getForcedWithdrawalRequest(
-        starkKey,
+        starkKeyToUint256(starkKey),
         positionId,
         quantizedAmount,
       ),
