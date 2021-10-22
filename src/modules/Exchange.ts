@@ -151,12 +151,12 @@ export class Exchange {
   public async forcedWithdrawalRequest(
     {
       starkKey,
-      vaultId,
+      positionId,
       quantizedAmount,
       premiumCost,
     }: {
       starkKey: string,
-      vaultId: string,
+      positionId: string,
       quantizedAmount: BigNumberable,
       premiumCost: boolean,
     },
@@ -166,7 +166,7 @@ export class Exchange {
       this.contracts.starkwarePerpetual,
       this.contracts.starkwarePerpetual.methods.forcedWithdrawalRequest(
         starkKey,
-        vaultId,
+        positionId,
         quantizedAmount,
         premiumCost
       ),
@@ -242,11 +242,11 @@ export class Exchange {
   public async getForcedWithdrawalRequest(
     {
       starkKey,
-      vaultId,
+      positionId,
       quantizedAmount,
     }: {
       starkKey: string,
-      vaultId: string,
+      positionId: string,
       quantizedAmount: BigNumberable,
     },
     options?: CallOptions,
@@ -254,7 +254,7 @@ export class Exchange {
     return this.contracts.call(
       this.contracts.starkwarePerpetual.methods.getForcedWithdrawalRequest(
         starkKey,
-        vaultId,
+        positionId,
         quantizedAmount,
       ),
       options,
