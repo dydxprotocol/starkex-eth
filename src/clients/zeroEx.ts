@@ -13,19 +13,15 @@ export async function getZeroExERC20SwapQuote({
   sellAmount,
   sellTokenAddress,
   buyTokenAddress,
-  slippagePercentage,
+  slippageFraction,
   networkId,
 }: {
   sellAmount: string,
   sellTokenAddress: string,
-  buyTokenAddress: string | undefined,
-  slippagePercentage: string,
+  buyTokenAddress: string,
+  slippageFraction?: string,
   networkId: number,
-}): Promise<{ to: string, data: string, buyAmount: string }> {
-  if (buyTokenAddress === undefined) {
-    throw new Error(`No buyTokenAddress with networkId: ${networkId}`);
-  }
-
+}): Promise<{ to: string, data: string, buyAmount: string, allowanceTarget: string }> {
   return axiosRequest({
     method: 'GET',
     url: generateQueryPath(
@@ -34,27 +30,23 @@ export async function getZeroExERC20SwapQuote({
         sellAmount,
         sellToken: sellTokenAddress,
         buyToken: buyTokenAddress,
-        slippagePercentage,
+        slippageFraction,
       },
     ),
-  }) as Promise<{ to: string, data: string, buyAmount: string }>;
+  }) as Promise<{ to: string, data: string, buyAmount: string, allowanceTarget: string }>;
 }
 
 export async function getZeroExETHSwapQuote({
   buyAmount,
   buyTokenAddress,
-  slippagePercentage,
+  slippageFraction,
   networkId,
 }: {
   buyAmount: string,
-  buyTokenAddress: string | undefined,
-  slippagePercentage: string,
+  buyTokenAddress: string,
+  slippageFraction?: string,
   networkId: number,
 }): Promise<{ to: string, data: string, value: number }> {
-  if (buyTokenAddress === undefined) {
-    throw new Error(`No buyTokenAddress with networkId: ${networkId}`);
-  }
-
   return axiosRequest({
     method: 'GET',
     url: generateQueryPath(
@@ -63,15 +55,17 @@ export async function getZeroExETHSwapQuote({
         buyAmount,
         sellToken: 'ETH',
         buyToken: buyTokenAddress,
-        slippagePercentage,
+        slippageFraction,
       },
     ),
   }) as Promise<{ to: string, data: string, value: number }>;
 }
 
-export function validateSlippage(slippage: string) {
-  const slippageBig: Big = Big(slippage);
-  if (slippageBig.lt(0) || slippageBig.gt(100)) {
-    throw Error(`Slippage: ${slippage} is not a valid percent from 0 to 100`);
+export function validateSlippage(slippage?: string) {
+  if (slippage) {
+    const slippageBig: Big = Big(slippage);
+    if (slippageBig.lt(0) || slippageBig.gt(1)) {
+      throw Error(`Slippage: ${slippage} is not a valid fraction from 0 to 1`);
+    }
   }
 }

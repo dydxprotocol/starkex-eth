@@ -4,7 +4,6 @@ import BigNumber from 'bignumber.js';
 import { getZeroExERC20SwapQuote, getZeroExETHSwapQuote, validateSlippage } from '../clients/zeroEx';
 import {
   COLLATERAL_ASSET_ID,
-  USDC_ADDRESSES,
   USDC_DECIMALS,
 } from '../lib/Constants';
 import {
@@ -14,6 +13,7 @@ import {
   uint256ToHumanCollateralTokenAmount,
 } from '../lib/ContractCallHelpers';
 import { Contracts } from '../lib/Contracts';
+import { getUsdcAddress } from '../lib/heleprs';
 import {
   Address,
   BigNumberable,
@@ -117,7 +117,7 @@ export class Exchange {
     );
   }
 
-  public async gaslessDeposit(
+  public async proxyDeposit(
     {
       depositAmount,
       starkKey,
@@ -129,11 +129,9 @@ export class Exchange {
     },
     options?: SendOptions,
   ): Promise<TxResult> {
-    const depositFunctionSignature = 'deposit(uint256,uint256,uint256)';
-
     return this.contracts.send(
       this.contracts.proxyDepositContract,
-      this.contracts.proxyDepositContract.methods[depositFunctionSignature](
+      this.contracts.proxyDepositContract.methods.deposit(
         humanCollateralAmountToUint256(depositAmount),
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
@@ -152,11 +150,9 @@ export class Exchange {
     },
     options?: SendOptions,
   ): Promise<TxResult> {
-    const approveSwapFunctionSignature = 'approveSwap(address,address)';
-
     return this.contracts.send(
       this.contracts.proxyDepositContract,
-      this.contracts.proxyDepositContract.methods[approveSwapFunctionSignature](
+      this.contracts.proxyDepositContract.methods.approveSwap(
         tokenFrom,
         exchange,
       ),
@@ -171,18 +167,18 @@ export class Exchange {
       minUsdcAmount,
       starkKey,
       positionId,
-      slippagePercentage = '1.0',
+      slippageFraction,
     }: {
       tokenFrom: string,
       tokenFromAmount: string,
       minUsdcAmount: string,
       starkKey: string,
       positionId: BigNumberable,
-      slippagePercentage?: string,
+      slippageFraction?: string,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
-    validateSlippage(slippagePercentage);
+    validateSlippage(slippageFraction);
 
     const sellAmount: string = humanCollateralAmountToUint256(tokenFromAmount);
 
@@ -190,17 +186,15 @@ export class Exchange {
       {
         sellAmount,
         sellTokenAddress: tokenFrom,
-        buyTokenAddress: USDC_ADDRESSES[this.contracts.networkId],
-        slippagePercentage,
+        buyTokenAddress: getUsdcAddress(this.contracts.networkId),
+        slippageFraction,
         networkId: this.contracts.networkId,
       },
     );
 
-    const depositERC20FunctionSignature = 'depositERC20(address,uint256,uint256,uint256,uint256,address,bytes)';
-
     return this.contracts.send(
       this.contracts.proxyDepositContract,
-      this.contracts.proxyDepositContract.methods[depositERC20FunctionSignature](
+      this.contracts.proxyDepositContract.methods.depositERC20(
         tokenFrom,
         sellAmount,
         humanCollateralAmountToUint256(minUsdcAmount),
@@ -220,18 +214,18 @@ export class Exchange {
       minUsdcAmount,
       starkKey,
       positionId,
-      slippagePercentage = '1.0',
+      slippageFraction,
     }: {
       tokenFrom: string,
       tokenFromAmount: string,
       minUsdcAmount: string,
       starkKey: string,
       positionId: BigNumberable,
-      slippagePercentage?: string,
+      slippageFraction?: string,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
-    validateSlippage(slippagePercentage);
+    validateSlippage(slippageFraction);
 
     const sellAmount: string = humanCollateralAmountToUint256(tokenFromAmount);
 
@@ -239,23 +233,22 @@ export class Exchange {
       {
         sellAmount,
         sellTokenAddress: tokenFrom,
-        buyTokenAddress: USDC_ADDRESSES[this.contracts.networkId],
-        slippagePercentage,
+        buyTokenAddress: getUsdcAddress(this.contracts.networkId),
+        slippageFraction,
         networkId: this.contracts.networkId,
       },
     );
 
-    const approveSwapAndDepositERC20FunctionSignature = 'approveSwapAndDepositERC20(address,uint256,uint256,uint256,uint256,address,bytes)';
-
     return this.contracts.send(
       this.contracts.proxyDepositContract,
-      this.contracts.proxyDepositContract.methods[approveSwapAndDepositERC20FunctionSignature](
+      this.contracts.proxyDepositContract.methods.approveSwapAndDepositERC20(
         tokenFrom,
         sellAmount,
         minUsdcAmount,
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
         zeroExRequest.to,
+        zeroExRequest.allowanceTarget,
         zeroExRequest.data,
       ),
       options,
@@ -267,39 +260,37 @@ export class Exchange {
       minUsdcAmount,
       starkKey,
       positionId,
-      slippagePercentage = '1.0',
+      slippageFraction,
     }: {
       minUsdcAmount: string,
       starkKey: string,
       positionId: BigNumberable,
-      slippagePercentage?: string,
+      slippageFraction?: string,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
-    validateSlippage(slippagePercentage);
+    validateSlippage(slippageFraction);
 
     const buyAmount: string = humanCollateralAmountToUint256(minUsdcAmount);
 
     const zeroExRequest = await getZeroExETHSwapQuote(
       {
         buyAmount,
-        buyTokenAddress: USDC_ADDRESSES[this.contracts.networkId],
-        slippagePercentage,
+        buyTokenAddress: getUsdcAddress(this.contracts.networkId),
+        slippageFraction,
         networkId: this.contracts.networkId,
       },
     );
 
-    const depositEthFunctionSignature = 'depositEth(uint256,uint256,uint256,address,bytes)';
-
-    if (options?.value && Big(options.value).lt(zeroExRequest.value)) {
+    if (options?.value !== undefined && !Big(options.value).eq(zeroExRequest.value)) {
       throw Error(
-        `Transaction cost: ${zeroExRequest.value} would be greater than specified max amount: ${options.value}`,
+        `proxyDepositETH: A transaction value ${options.value} was provided which does not match the swap cost of ${zeroExRequest.value}`,
       );
     }
 
     return this.contracts.send(
       this.contracts.proxyDepositContract,
-      this.contracts.proxyDepositContract.methods[depositEthFunctionSignature](
+      this.contracts.proxyDepositContract.methods.depositEth(
         buyAmount,
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
@@ -314,14 +305,14 @@ export class Exchange {
     {
       humanSellAmount,
       sellTokenAddress,
-      slippagePercentage = '1.0',
+      slippageFraction,
     }: {
       humanSellAmount: string,
       sellTokenAddress: string,
-      slippagePercentage?: string,
+      slippageFraction?: string,
     },
   ): Promise<string> {
-    validateSlippage(slippagePercentage);
+    validateSlippage(slippageFraction);
 
     const sellAmount: string = humanCollateralAmountToUint256(humanSellAmount);
 
@@ -329,8 +320,8 @@ export class Exchange {
       {
         sellAmount,
         sellTokenAddress,
-        buyTokenAddress: USDC_ADDRESSES[this.contracts.networkId],
-        slippagePercentage,
+        buyTokenAddress: getUsdcAddress(this.contracts.networkId),
+        slippageFraction,
         networkId: this.contracts.networkId,
       },
     );

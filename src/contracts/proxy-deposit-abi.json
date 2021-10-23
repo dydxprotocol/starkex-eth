@@ -6,7 +6,7 @@
     },
     "3": {
       "links": {},
-      "address": "0x53773fE5ff4451c896127Dd2c91b8dE7ac51Ba2C"
+      "address": "0x0e15193AFBfBea49d0299081d59fb24BC61080E8"
     }
   },
   "abi": [
@@ -123,6 +123,11 @@
         {
           "internalType": "address",
           "name": "exchange",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "allowanceTarget",
           "type": "address"
         },
         {
