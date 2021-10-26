@@ -9,7 +9,7 @@ const zeroExUrlMap: { [networkId: number]: string } = {
   [Networks.ROPSTEN]: 'https://ropsten.api.0x.org/swap/v1/quote',
 };
 
-export async function getZeroExERC20SwapQuote({
+export async function getZeroExSwapQuote({
   sellAmount,
   sellTokenAddress,
   buyTokenAddress,
@@ -29,31 +29,6 @@ export async function getZeroExERC20SwapQuote({
       {
         sellAmount,
         sellToken: sellTokenAddress,
-        buyToken: buyTokenAddress,
-        slippageFraction,
-      },
-    ),
-  }) as Promise<ZeroExSwapResponse>;
-}
-
-export async function getZeroExETHSwapQuote({
-  buyAmount,
-  buyTokenAddress,
-  slippageFraction,
-  networkId,
-}: {
-  buyAmount: string,
-  buyTokenAddress: string,
-  slippageFraction?: string,
-  networkId: number,
-}): Promise<ZeroExSwapResponse> {
-  return axiosRequest({
-    method: 'GET',
-    url: generateQueryPath(
-      zeroExUrlMap[networkId],
-      {
-        buyAmount,
-        sellToken: 'ETH',
         buyToken: buyTokenAddress,
         slippageFraction,
       },

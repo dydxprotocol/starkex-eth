@@ -73,7 +73,7 @@ export class FactRegistry {
     return result as string;
   }
 
-  public async transferETH(
+  public async transferEth(
     {
       recipient,
       humanAmount,

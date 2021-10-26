@@ -2,8 +2,7 @@ import Big from 'big.js';
 import BigNumber from 'bignumber.js';
 
 import {
-  getZeroExERC20SwapQuote,
-  getZeroExETHSwapQuote,
+  getZeroExSwapQuote,
   validateSlippage,
 } from '../clients/zeroEx';
 import {
@@ -21,7 +20,6 @@ import {
   Address,
   BigNumberable,
   CallOptions,
-  ETH_DECIMALS,
   BASE_DECIMALS,
   SendOptions,
   TxResult,
@@ -168,12 +166,12 @@ export class Exchange {
 
   public async proxyDepositERC20(
     {
-      humanMinUSDCAmount,
+      humanMinUsdcAmount,
       starkKey,
       positionId,
       zeroExResponseObject,
     }: {
-      humanMinUSDCAmount: string,
+      humanMinUsdcAmount: string,
       starkKey: string,
       positionId: BigNumberable,
       zeroExResponseObject: ZeroExSwapResponse,
@@ -185,7 +183,7 @@ export class Exchange {
       this.contracts.proxyDepositContract.methods.depositERC20(
         zeroExResponseObject.sellTokenAddress,
         zeroExResponseObject.sellAmount,
-        humanCollateralAmountToUint256(humanMinUSDCAmount),
+        humanCollateralAmountToUint256(humanMinUsdcAmount),
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
         zeroExResponseObject.to,
@@ -197,12 +195,12 @@ export class Exchange {
 
   public async approveSwapAndProxyDepositERC20(
     {
-      humanMinUSDCAmount,
+      humanMinUsdcAmount,
       starkKey,
       positionId,
       zeroExResponseObject,
     }: {
-      humanMinUSDCAmount: string,
+      humanMinUsdcAmount: string,
       starkKey: string,
       positionId: BigNumberable,
       zeroExResponseObject: ZeroExSwapResponse,
@@ -214,7 +212,7 @@ export class Exchange {
       this.contracts.proxyDepositContract.methods.approveSwapAndDepositERC20(
         zeroExResponseObject.sellTokenAddress,
         zeroExResponseObject.sellAmount,
-        humanCollateralAmountToUint256(humanMinUSDCAmount),
+        humanCollateralAmountToUint256(humanMinUsdcAmount),
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
         zeroExResponseObject.to,
@@ -225,7 +223,7 @@ export class Exchange {
     );
   }
 
-  public async proxyDepositETH(
+  public async proxyDepositEth(
     {
       starkKey,
       positionId,
@@ -239,7 +237,7 @@ export class Exchange {
   ): Promise<TxResult> {
     if (options?.value !== undefined && !Big(options.value).eq(zeroExResponseObject.value)) {
       throw Error(
-        `proxyDepositETH: A transaction value ${options.value} was provided which does not match the swap cost of ${zeroExResponseObject.value}`,
+        `proxyDepositEth: A transaction value ${options.value} was provided which does not match the swap cost of ${zeroExResponseObject.value}`,
       );
     }
 
@@ -256,7 +254,11 @@ export class Exchange {
     );
   }
 
-  public async estimateERC20ToUSDCConversionAmount(
+  /**
+   * @description get expected and worst USDC for some amount of input sellToken.
+   * @notice For eth pass in 'ETH' as the sellTokenAddress.
+   */
+  public async estimateERC20OrEthToUsdcConversionAmount(
     {
       humanSellAmount,
       sellTokenAddress,
@@ -267,15 +269,15 @@ export class Exchange {
       slippageFraction?: string,
     },
   ): Promise<{
-      expectedUSDCHumanAmount: string,
-      worstUSDCHumanAmount: string,
+      expectedUsdcHumanAmount: string,
+      worstUsdcHumanAmount: string,
       zeroExResponseObject: ZeroExSwapResponse,
     }> {
     validateSlippage(slippageFraction);
 
     const sellAmount: string = humanCollateralAmountToUint256(humanSellAmount);
 
-    const zeroExResponseObject: ZeroExSwapResponse = await getZeroExERC20SwapQuote(
+    const zeroExResponseObject: ZeroExSwapResponse = await getZeroExSwapQuote(
       {
         sellAmount,
         sellTokenAddress,
@@ -285,54 +287,15 @@ export class Exchange {
       },
     );
 
-    const expectedUSDCHumanAmount: Big = Big(zeroExResponseObject.buyAmount);
-    expectedUSDCHumanAmount.e -= BASE_DECIMALS;
+    const expectedUsdcHumanAmount: Big = Big(zeroExResponseObject.buyAmount);
+    expectedUsdcHumanAmount.e -= BASE_DECIMALS;
 
-    const worstUSDCHumanAmount: Big = Big(sellAmount).div(zeroExResponseObject.guaranteedPrice);
-    worstUSDCHumanAmount.e -= BASE_DECIMALS;
-
-    return {
-      expectedUSDCHumanAmount: expectedUSDCHumanAmount.toString(),
-      worstUSDCHumanAmount: worstUSDCHumanAmount.toString(),
-      zeroExResponseObject,
-    };
-  }
-
-  public async estimateETHToUSDCConversionAmount(
-    {
-      humanBuyAmount,
-      slippageFraction,
-    }: {
-      humanBuyAmount: string,
-      slippageFraction?: string,
-    },
-  ): Promise<{
-      expectETHHumanAmount: string,
-      worstETHHumanAmount: string,
-      zeroExResponseObject: ZeroExSwapResponse,
-    }> {
-    validateSlippage(slippageFraction);
-
-    const buyAmount: string = humanCollateralAmountToUint256(humanBuyAmount);
-
-    const zeroExResponseObject: ZeroExSwapResponse = await getZeroExETHSwapQuote(
-      {
-        buyAmount,
-        buyTokenAddress: getUsdcAddress(this.contracts.networkId),
-        slippageFraction,
-        networkId: this.contracts.networkId,
-      },
-    );
-
-    const expectETHHumanAmount: Big = Big(zeroExResponseObject.sellAmount);
-    expectETHHumanAmount.e -= ETH_DECIMALS;
-
-    const worstETHHumanAmount: Big = Big(buyAmount).times(zeroExResponseObject.guaranteedPrice);
-    worstETHHumanAmount.e -= ETH_DECIMALS;
+    const worstUsdcHumanAmount: Big = Big(sellAmount).div(zeroExResponseObject.guaranteedPrice);
+    worstUsdcHumanAmount.e -= BASE_DECIMALS;
 
     return {
-      expectETHHumanAmount: expectETHHumanAmount.toString(),
-      worstETHHumanAmount: worstETHHumanAmount.toString(),
+      expectedUsdcHumanAmount: expectedUsdcHumanAmount.round(BASE_DECIMALS).toString(),
+      worstUsdcHumanAmount: worstUsdcHumanAmount.round(BASE_DECIMALS).toString(),
       zeroExResponseObject,
     };
   }
