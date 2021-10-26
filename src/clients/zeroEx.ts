@@ -2,7 +2,7 @@ import Big from 'big.js';
 
 import { axiosRequest } from '../lib/axios/axios';
 import { generateQueryPath } from '../lib/axios/request-helpers';
-import { Networks } from '../types';
+import { Networks, ZeroExSwapResponse } from '../types';
 
 const zeroExUrlMap: { [networkId: number]: string } = {
   [Networks.MAINNET]: 'https://api.0x.org/swap/v1/quote',
@@ -21,7 +21,7 @@ export async function getZeroExERC20SwapQuote({
   buyTokenAddress: string,
   slippageFraction?: string,
   networkId: number,
-}): Promise<{ to: string, data: string, buyAmount: string, allowanceTarget: string }> {
+}): Promise<ZeroExSwapResponse> {
   return axiosRequest({
     method: 'GET',
     url: generateQueryPath(
@@ -33,7 +33,7 @@ export async function getZeroExERC20SwapQuote({
         slippageFraction,
       },
     ),
-  }) as Promise<{ to: string, data: string, buyAmount: string, allowanceTarget: string }>;
+  }) as Promise<ZeroExSwapResponse>;
 }
 
 export async function getZeroExETHSwapQuote({
@@ -46,7 +46,7 @@ export async function getZeroExETHSwapQuote({
   buyTokenAddress: string,
   slippageFraction?: string,
   networkId: number,
-}): Promise<{ to: string, data: string, value: number }> {
+}): Promise<ZeroExSwapResponse> {
   return axiosRequest({
     method: 'GET',
     url: generateQueryPath(
@@ -58,7 +58,7 @@ export async function getZeroExETHSwapQuote({
         slippageFraction,
       },
     ),
-  }) as Promise<{ to: string, data: string, value: number }>;
+  }) as Promise<ZeroExSwapResponse>;
 }
 
 export function validateSlippage(slippage?: string) {
