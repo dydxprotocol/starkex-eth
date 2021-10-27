@@ -256,16 +256,16 @@ export class Exchange {
 
   /**
    * @description get expected and worst USDC for some amount of input sellToken.
-   * @notice For eth pass in 'ETH' as the sellTokenAddress.
+   * @notice For eth pass in 'ETH' as the sellToken.
    */
-  public async estimateERC20OrEthToUsdcConversionAmount(
+  public async estimateConversionAmount(
     {
       humanSellAmount,
-      sellTokenAddress,
+      sellToken,
       slippageFraction,
     }: {
       humanSellAmount: string,
-      sellTokenAddress: string,
+      sellToken: string,
       slippageFraction?: string,
     },
   ): Promise<{
@@ -280,7 +280,7 @@ export class Exchange {
     const zeroExResponseObject: ZeroExSwapResponse = await getZeroExSwapQuote(
       {
         sellAmount,
-        sellTokenAddress,
+        sellToken,
         buyTokenAddress: getUsdcAddress(this.contracts.networkId),
         slippageFraction,
         networkId: this.contracts.networkId,
@@ -294,8 +294,8 @@ export class Exchange {
     worstUsdcHumanAmount.e -= BASE_DECIMALS;
 
     return {
-      expectedUsdcHumanAmount: expectedUsdcHumanAmount.round(BASE_DECIMALS).toString(),
-      worstUsdcHumanAmount: worstUsdcHumanAmount.round(BASE_DECIMALS).toString(),
+      expectedUsdcHumanAmount: expectedUsdcHumanAmount.round(BASE_DECIMALS, 0).toString(),
+      worstUsdcHumanAmount: worstUsdcHumanAmount.round(BASE_DECIMALS, 0).toString(),
       zeroExResponseObject,
     };
   }

@@ -11,13 +11,13 @@ const zeroExUrlMap: { [networkId: number]: string } = {
 
 export async function getZeroExSwapQuote({
   sellAmount,
-  sellTokenAddress,
+  sellToken,
   buyTokenAddress,
   slippageFraction,
   networkId,
 }: {
   sellAmount: string,
-  sellTokenAddress: string,
+  sellToken: string,
   buyTokenAddress: string,
   slippageFraction?: string,
   networkId: number,
@@ -28,7 +28,7 @@ export async function getZeroExSwapQuote({
       zeroExUrlMap[networkId],
       {
         sellAmount,
-        sellToken: sellTokenAddress,
+        sellToken,
         buyToken: buyTokenAddress,
         slippageFraction,
       },
