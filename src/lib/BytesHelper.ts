@@ -1,5 +1,7 @@
 import BigNumber from 'bignumber.js';
-import Web3 from 'web3';
+import {humanTokenAmountToUint256, bignumberableToUint256 } from './ContractCallHelpers'
+var utils = require('web3-utils');
+// var factRegister =  require('../modules/FactRegistry');
 
 import {
   BigNumberable,
@@ -40,9 +42,41 @@ export function getAssetId(
 function soliditySha3(
   ...input: any
 ): string {
-  const result = Web3.utils.soliditySha3(...input);
+  const result = utils.soliditySha3(...input);
   if (!result) {
     throw new Error('soliditySha3 produced null output');
   }
   return result;
+}
+
+export class StarkHelper {
+  public getTransferErc20Fact(recipient: string,
+      tokenAddress: string,
+      tokenDecimals: number,
+      humanAmount: string,
+      salt: string,
+    ): string {
+    const result: string | null = utils.soliditySha3(
+      { type: 'address', value: recipient },
+      { type: 'uint256', value: humanTokenAmountToUint256(humanAmount, tokenDecimals) },
+      { type: 'address', value: tokenAddress },
+      { type: 'uint256', value: bignumberableToUint256(salt) },
+    );
+    return result as string;
+  }
+
+  public getAssetId(
+    tokenAddress: string,
+    quantization: BigNumberable = 1,
+  ): string {
+    const tokenHash: string = soliditySha3('ERC20Token(address)').substr(0, 10);
+    const resultBytes = soliditySha3(
+      { type: 'bytes4', value: tokenHash },
+      { type: 'uint256', value: tokenAddress },
+      { type: 'uint256', value: new BigNumber(quantization).toFixed(0) },
+    );
+    const resultBN = new BigNumber(resultBytes, 16);
+    const result = resultBN.mod(ASSET_ID_MASK);
+    return `0x${result.toString(16).padStart(64, '0')}`;
+  }
 }

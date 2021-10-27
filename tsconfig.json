@@ -6,9 +6,9 @@
     "src"
   ],
   "compilerOptions": {
+    "moduleResolution": "Node",
+    "module": "CommonJS",
     "outDir": "build",
-    "types": [
-      "@types/jest",
-    ]
+    "target": "es5"
   }
 }

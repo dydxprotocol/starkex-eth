@@ -1,5 +1,3 @@
-import Web3 from 'web3';
-
 import { ADDRESSES } from '../lib/Constants';
 import {
   bignumberableToUint256,
@@ -15,6 +13,8 @@ import {
   SendOptions,
   TxResult,
 } from '../types';
+
+var utils = require('web3-utils');
 
 export class FactRegistry {
   protected contracts: Contracts;
@@ -64,7 +64,7 @@ export class FactRegistry {
       salt: string,
     },
   ): string {
-    const result: string | null = Web3.utils.soliditySha3(
+    const result: string | null = utils.soliditySha3(
       { type: 'address', value: recipient },
       { type: 'uint256', value: humanTokenAmountToUint256(humanAmount, tokenDecimals) },
       { type: 'address', value: tokenAddress },
