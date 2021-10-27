@@ -1,5 +1,10 @@
+import Big from 'big.js';
 import BigNumber from 'bignumber.js';
 
+import {
+  getZeroExSwapQuote,
+  validateSlippage,
+} from '../clients/zeroEx';
 import {
   COLLATERAL_ASSET_ID,
 } from '../lib/Constants';
@@ -10,12 +15,15 @@ import {
   uint256ToHumanCollateralTokenAmount,
 } from '../lib/ContractCallHelpers';
 import { Contracts } from '../lib/Contracts';
+import { getUsdcAddress } from '../lib/heleprs';
 import {
   Address,
   BigNumberable,
   CallOptions,
+  BASE_DECIMALS,
   SendOptions,
   TxResult,
+  ZeroExSwapResponse,
 } from '../types';
 
 export class Exchange {
@@ -29,6 +37,10 @@ export class Exchange {
 
   public getAddress(): string {
     return this.contracts.starkwarePerpetual.options.address;
+  }
+
+  public getProxyDepositAddress(): string {
+    return this.contracts.proxyDepositContract.options.address;
   }
 
   public async register(
@@ -107,6 +119,185 @@ export class Exchange {
       ),
       options,
     );
+  }
+
+  public async proxyDeposit(
+    {
+      humanAmount,
+      starkKey,
+      positionId,
+    }: {
+      humanAmount: string,
+      starkKey: string,
+      positionId: BigNumberable,
+    },
+    options?: SendOptions,
+  ): Promise<TxResult> {
+    return this.contracts.send(
+      this.contracts.proxyDepositContract,
+      this.contracts.proxyDepositContract.methods.deposit(
+        humanCollateralAmountToUint256(humanAmount),
+        starkKeyToUint256(starkKey),
+        bignumberableToUint256(positionId),
+      ),
+      options,
+    );
+  }
+
+  public async approveSwap(
+    {
+      tokenFrom,
+      allowanceTarget,
+    }: {
+      tokenFrom: string,
+      allowanceTarget: string,
+    },
+    options?: SendOptions,
+  ): Promise<TxResult> {
+    return this.contracts.send(
+      this.contracts.proxyDepositContract,
+      this.contracts.proxyDepositContract.methods.approveSwap(
+        tokenFrom,
+        allowanceTarget,
+      ),
+      options,
+    );
+  }
+
+  public async proxyDepositERC20(
+    {
+      humanMinUsdcAmount,
+      starkKey,
+      positionId,
+      zeroExResponseObject,
+    }: {
+      humanMinUsdcAmount: string,
+      starkKey: string,
+      positionId: BigNumberable,
+      zeroExResponseObject: ZeroExSwapResponse,
+    },
+    options?: SendOptions,
+  ): Promise<TxResult> {
+    return this.contracts.send(
+      this.contracts.proxyDepositContract,
+      this.contracts.proxyDepositContract.methods.depositERC20(
+        zeroExResponseObject.sellTokenAddress,
+        zeroExResponseObject.sellAmount,
+        humanCollateralAmountToUint256(humanMinUsdcAmount),
+        starkKeyToUint256(starkKey),
+        bignumberableToUint256(positionId),
+        zeroExResponseObject.to,
+        zeroExResponseObject.data,
+      ),
+      options,
+    );
+  }
+
+  public async approveSwapAndProxyDepositERC20(
+    {
+      humanMinUsdcAmount,
+      starkKey,
+      positionId,
+      zeroExResponseObject,
+    }: {
+      humanMinUsdcAmount: string,
+      starkKey: string,
+      positionId: BigNumberable,
+      zeroExResponseObject: ZeroExSwapResponse,
+    },
+    options?: SendOptions,
+  ): Promise<TxResult> {
+    return this.contracts.send(
+      this.contracts.proxyDepositContract,
+      this.contracts.proxyDepositContract.methods.approveSwapAndDepositERC20(
+        zeroExResponseObject.sellTokenAddress,
+        zeroExResponseObject.sellAmount,
+        humanCollateralAmountToUint256(humanMinUsdcAmount),
+        starkKeyToUint256(starkKey),
+        bignumberableToUint256(positionId),
+        zeroExResponseObject.to,
+        zeroExResponseObject.allowanceTarget,
+        zeroExResponseObject.data,
+      ),
+      options,
+    );
+  }
+
+  public async proxyDepositEth(
+    {
+      starkKey,
+      positionId,
+      zeroExResponseObject,
+    }: {
+      starkKey: string,
+      positionId: BigNumberable,
+      zeroExResponseObject: ZeroExSwapResponse,
+    },
+    options?: SendOptions,
+  ): Promise<TxResult> {
+    if (options?.value !== undefined && !Big(options.value).eq(zeroExResponseObject.value)) {
+      throw Error(
+        `proxyDepositEth: A transaction value ${options.value} was provided which does not match the swap cost of ${zeroExResponseObject.value}`,
+      );
+    }
+
+    return this.contracts.send(
+      this.contracts.proxyDepositContract,
+      this.contracts.proxyDepositContract.methods.depositEth(
+        zeroExResponseObject.buyAmount,
+        starkKeyToUint256(starkKey),
+        bignumberableToUint256(positionId),
+        zeroExResponseObject.to,
+        zeroExResponseObject.data,
+      ),
+      { ...options, value: zeroExResponseObject.value },
+    );
+  }
+
+  /**
+   * @description get expected and worst USDC for some amount of input sellToken.
+   * @notice For eth pass in 'ETH' as the sellToken.
+   */
+  public async estimateConversionAmount(
+    {
+      humanSellAmount,
+      sellToken,
+      slippageFraction,
+    }: {
+      humanSellAmount: string,
+      sellToken: string,
+      slippageFraction?: string,
+    },
+  ): Promise<{
+      expectedUsdcHumanAmount: string,
+      worstUsdcHumanAmount: string,
+      zeroExResponseObject: ZeroExSwapResponse,
+    }> {
+    validateSlippage(slippageFraction);
+
+    const sellAmount: string = humanCollateralAmountToUint256(humanSellAmount);
+
+    const zeroExResponseObject: ZeroExSwapResponse = await getZeroExSwapQuote(
+      {
+        sellAmount,
+        sellToken,
+        buyTokenAddress: getUsdcAddress(this.contracts.networkId),
+        slippageFraction,
+        networkId: this.contracts.networkId,
+      },
+    );
+
+    const expectedUsdcHumanAmount: Big = Big(zeroExResponseObject.buyAmount);
+    expectedUsdcHumanAmount.e -= BASE_DECIMALS;
+
+    const worstUsdcHumanAmount: Big = Big(sellAmount).div(zeroExResponseObject.guaranteedPrice);
+    worstUsdcHumanAmount.e -= BASE_DECIMALS;
+
+    return {
+      expectedUsdcHumanAmount: expectedUsdcHumanAmount.round(BASE_DECIMALS, 0).toString(),
+      worstUsdcHumanAmount: worstUsdcHumanAmount.round(BASE_DECIMALS, 0).toString(),
+      zeroExResponseObject,
+    };
   }
 
   public async withdraw(

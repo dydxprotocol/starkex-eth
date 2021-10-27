@@ -2,23 +2,23 @@
   "networks": {
     "1": {
       "links": {},
-      "address": "0xD54f502e184B6B739d7D27a6410a67dc462D69c8",
+      "address": "PLACEHOLDER"
     },
     "3": {
       "links": {},
-      "address": "0x014F738EAd8Ec6C50BCD456a971F8B84Cd693BBe",
+      "address": "0x029bB89d64695D6A461eEbC1Aab4a4C8657a3f22"
     }
   },
   "abi": [
     {
       "inputs": [
         {
-          "internalType": "address",
+          "internalType": "contract I_StarkwareContract",
           "name": "starkwareContractAddress",
           "type": "address"
         },
         {
-          "internalType": "address",
+          "internalType": "contract IERC20",
           "name": "usdcAddress",
           "type": "address"
         },
@@ -37,19 +37,7 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "account",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "source",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "exchangeWrapper",
+          "name": "sender",
           "type": "address"
         },
         {
@@ -67,7 +55,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "tokenToAmount",
+          "name": "usdcAmount",
           "type": "uint256"
         }
       ],
@@ -91,6 +79,24 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "exchange",
+          "type": "address"
+        },
+        {
+          "internalType": "contract IERC20",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "approveSwap",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IERC20",
           "name": "tokenFrom",
           "type": "address"
         },
@@ -100,9 +106,9 @@
           "type": "uint256"
         },
         {
-          "internalType": "address",
-          "name": "exchangeWrapper",
-          "type": "address"
+          "internalType": "uint256",
+          "name": "minUsdcAmount",
+          "type": "uint256"
         },
         {
           "internalType": "uint256",
@@ -115,12 +121,22 @@
           "type": "uint256"
         },
         {
+          "internalType": "address",
+          "name": "exchange",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "allowanceTarget",
+          "type": "address"
+        },
+        {
           "internalType": "bytes",
           "name": "data",
           "type": "bytes"
         }
       ],
-      "name": "deposit",
+      "name": "approveSwapAndDepositERC20",
       "outputs": [
         {
           "internalType": "uint256",
@@ -129,6 +145,162 @@
         }
       ],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "depositAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "starkKey",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "positionId",
+          "type": "uint256"
+        }
+      ],
+      "name": "deposit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "tokenFrom",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenFromAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minUsdcAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "starkKey",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "positionId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "exchange",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "depositERC20",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "minUsdcAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "starkKey",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "positionId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "exchange",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "depositEth",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "forwarder",
+          "type": "address"
+        }
+      ],
+      "name": "isTrustedForwarder",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "trustedForwarder",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "versionRecipient",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     }
   ]
