@@ -89,3 +89,15 @@ export interface ParsedLog extends Log {
   name?: string;
   args: ParsedLogArgs;
 }
+
+export interface ZeroExSwapResponse {
+  guaranteedPrice: string,
+  to: string,
+  data: string,
+  value: string,
+  buyAmount: string,
+  sellAmount: string,
+  buyTokenAddress: string,
+  sellTokenAddress: string,
+  allowanceTarget: string,
+}

@@ -1,6 +1,6 @@
 {
   "name": "@dydxprotocol/starkex-eth",
-  "version": "0.11.3",
+  "version": "0.12.2",
   "description": "Cryptographic functions for use with StarkEx",
   "main": "build/src/index.js",
   "scripts": {
@@ -27,6 +27,7 @@
   "dependencies": {
     "@types/big.js": "^6.0.0",
     "@types/elliptic": "^6.4.12",
+    "axios": "^0.21.4",
     "big.js": "^6.0.0",
     "bignumber.js": "^9.0.1",
     "lodash": "^4.17.20",
@@ -36,6 +37,7 @@
   "devDependencies": {
     "@dydxprotocol/node-service-base-dev": "0.0.8",
     "crypto-browserify": "^3.12.0",
+    "typescript": "^4.4.4",
     "stream-browserify": "^3.0.0",
     "webpack": "^5.35.0",
     "webpack-cli": "^4.7.2"

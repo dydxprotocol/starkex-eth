@@ -9,6 +9,10 @@
     "moduleResolution": "Node",
     "module": "CommonJS",
     "outDir": "build",
-    "target": "es5"
+    "target": "es5",
+    "types": [
+          "@types/jest",
+        ],
+    "useUnknownInCatchVariables": false
   }
 }

@@ -31,6 +31,7 @@ import {
 
 import factRegistryAbi from '../contracts/fact-registry-abi.json';
 import mintableTokenAbi from '../contracts/mintable-token-abi.json';
+import proxyDepositAbi from '../contracts/proxy-deposit-abi.json';
 import starkwarePerpetualAbi from '../contracts/starkware-perpetual-abi.json';
 import usdcAbi from '../contracts/usdc-abi.json';
 // Contracts
@@ -71,6 +72,7 @@ export class Contracts {
   public starkwarePerpetual: Contract;
   public collateralToken: Contract;
   public mintableToken: Contract;
+  public proxyDepositContract: Contract;
 
   constructor(
     provider: Provider,
@@ -81,7 +83,7 @@ export class Contracts {
     this.web3 = web3;
     this.defaultOptions = {
       gas: null,
-      gasPrice: 1000000000,
+      gasPrice: undefined,
       value: 0,
       from: null,
       confirmations: 0,
@@ -97,6 +99,7 @@ export class Contracts {
     this.starkwarePerpetual = this.addContract(starkwarePerpetualAbi);
     this.collateralToken = this.addContract(usdcAbi);
     this.mintableToken = this.addContract(mintableTokenAbi);
+    this.proxyDepositContract = this.addContract(proxyDepositAbi);
     this.setProvider(provider, networkId);
     this.setDefaultAccount(this.web3.eth.defaultAccount as string);
   }
