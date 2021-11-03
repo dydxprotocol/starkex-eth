@@ -66,6 +66,8 @@ export interface SendOptions extends NativeSendOptions {
   confirmations?: number;
   confirmationType?: ConfirmationType;
   gasMultiplier?: number;
+  sendGaslessTransaction?: boolean;
+  signatureType?: string;
 }
 
 export interface CallOptions extends TxOptions {

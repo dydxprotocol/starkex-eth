@@ -51,7 +51,7 @@ enum OUTCOMES {
   REJECTED = 2,
 }
 
-interface Json {
+export interface Json {
   abi: any;
   networks: { [network: number]: any };
 }
@@ -64,8 +64,8 @@ interface ContractInfo {
 
 export class Contracts {
   private defaultOptions: SendOptions;
-  protected web3: Web3;
 
+  public web3: Web3;
   public networkId: number;
   public contractsList: ContractInfo[] = [];
   public factRegistry: Contract;

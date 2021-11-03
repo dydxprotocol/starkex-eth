@@ -5,6 +5,7 @@ import {
   getZeroExSwapQuote,
   validateSlippage,
 } from '../clients/zeroEx';
+import usdcAbi from '../contracts/usdc-abi.json';
 import {
   COLLATERAL_ASSET_ID,
 } from '../lib/Constants';
@@ -13,9 +14,10 @@ import {
   humanCollateralAmountToUint256,
   starkKeyToUint256,
   uint256ToHumanCollateralTokenAmount,
+  uint256ToHumanTokenAmount,
 } from '../lib/ContractCallHelpers';
-import { Contracts } from '../lib/Contracts';
-import { getUsdcAddress } from '../lib/heleprs';
+import { Contracts, Json } from '../lib/Contracts';
+import { getUsdcAddress } from '../lib/helpers';
 import {
   Address,
   BigNumberable,
@@ -133,6 +135,26 @@ export class Exchange {
     },
     options?: SendOptions,
   ): Promise<TxResult> {
+    if (options?.sendGaslessTransaction) {
+      if (options.sendGaslessTransaction) {
+        return this.contracts.proxyDepositContract.methods.deposit(
+          humanCollateralAmountToUint256(humanAmount),
+          starkKeyToUint256(starkKey),
+          bignumberableToUint256(positionId),
+        ).send(options);
+      }
+
+      return this.contracts.send(
+        this.contracts.proxyDepositContract,
+        this.contracts.proxyDepositContract.methods.deposit(
+          humanCollateralAmountToUint256(humanAmount),
+          starkKeyToUint256(starkKey),
+          bignumberableToUint256(positionId),
+        ),
+        options,
+      );
+    }
+
     return this.contracts.send(
       this.contracts.proxyDepositContract,
       this.contracts.proxyDepositContract.methods.deposit(
@@ -451,5 +473,30 @@ export class Exchange {
       options,
     );
     return !new BigNumber(result).isZero();
+  }
+
+  public async getERC20Allowance(
+    {
+      ownerAddress,
+      spenderAddress,
+      tokenAddress,
+    }: {
+      ownerAddress: Address,
+      spenderAddress: Address,
+      tokenAddress: Address,
+    },
+    options?: CallOptions,
+  ): Promise<string> {
+    const token = new this.contracts.web3.eth.Contract((usdcAbi as Json).abi, tokenAddress);
+    const allowance: string = await this.contracts.call(
+      token.methods.allowance(ownerAddress, spenderAddress),
+      options,
+    );
+
+    const decimals: number = await this.contracts.call(
+      token.methods.decimals(),
+      options,
+    );
+    return uint256ToHumanTokenAmount(allowance, decimals);
   }
 }
