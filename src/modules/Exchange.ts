@@ -5,7 +5,7 @@ import {
   getZeroExSwapQuote,
   validateSlippage,
 } from '../clients/zeroEx';
-import usdcAbi from '../contracts/usdc-abi.json';
+import erc20Abi from '../contracts/usdc-abi.json';
 import {
   COLLATERAL_ASSET_ID,
 } from '../lib/Constants';
@@ -387,6 +387,25 @@ export class Exchange {
     );
   }
 
+  public async setERC20Allowance(
+    {
+      tokenAddress,
+      address,
+      amount,
+    }: {
+      tokenAddress: Address,
+      address: Address,
+      amount: BigNumberable,
+    },
+    options?: CallOptions,
+  ): Promise<string> {
+    const token = new this.contracts.web3.eth.Contract((erc20Abi as Json).abi, tokenAddress);
+    return this.contracts.call(
+      token.methods.approve(address, amount),
+      options,
+    );
+  }
+
   // ============ Getters ============
 
   public async getEthKey(
@@ -487,7 +506,7 @@ export class Exchange {
     },
     options?: CallOptions,
   ): Promise<string> {
-    const token = new this.contracts.web3.eth.Contract((usdcAbi as Json).abi, tokenAddress);
+    const token = new this.contracts.web3.eth.Contract((erc20Abi as Json).abi, tokenAddress);
     const allowance: string = await this.contracts.call(
       token.methods.allowance(ownerAddress, spenderAddress),
       options,
