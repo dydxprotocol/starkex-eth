@@ -5,7 +5,8 @@ import { DummyProvider } from './helpers/DummyProvider';
 import { Networks } from '../src/types';
 import Web3 from 'web3';
 
-jest.setTimeout(20000);
+// async ropsten calls can take >10k MS
+jest.setTimeout(40000);
 
 describe('StarwareLib#initiate', () => {
   const dummyProvider = new DummyProvider() as unknown as Provider;
@@ -33,18 +34,19 @@ describe('StarwareLib#initiate', () => {
       await real.exchange.setERC20Allowance({
         tokenAddress: '0x8707a5bf4c2842d46b31a405ba41b858c0f876c4',
         address: '0x029bB89d64695D6A461eEbC1Aab4a4C8657a3f22',
-        amount: 1,
-      });
+        amount: 100,
+      }, { from: account.address });
 
-      await real.exchange.getERC20Allowance({
+      const result: string = await real.exchange.getERC20Allowance({
         ownerAddress: account.address,
         tokenAddress: '0x8707a5bf4c2842d46b31a405ba41b858c0f876c4',
         spenderAddress: '0x029bB89d64695D6A461eEbC1Aab4a4C8657a3f22',
         decimals: 8,
       });
+
+      expect(result).toEqual('0.000001');
     } catch (error) {
       console.log(error);
     }
-
   });
 });

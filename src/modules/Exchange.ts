@@ -5,6 +5,7 @@ import {
   getZeroExSwapQuote,
   validateSlippage,
 } from '../clients/zeroEx';
+import erc20Abi from '../contracts/ierc20-abi.json';
 import {
   COLLATERAL_ASSET_ID,
 } from '../lib/Constants';
@@ -15,7 +16,7 @@ import {
   uint256ToHumanCollateralTokenAmount,
   uint256ToHumanTokenAmount,
 } from '../lib/ContractCallHelpers';
-import { Contracts } from '../lib/Contracts';
+import { Contracts, Json } from '../lib/Contracts';
 import { getUsdcAddress } from '../lib/helpers';
 import {
   Address,
@@ -386,7 +387,7 @@ export class Exchange {
     },
     options?: CallOptions,
   ): Promise<TxResult> {
-    const token = this.contracts.collateralToken;
+    const token = new this.contracts.web3.eth.Contract((erc20Abi as Json).abi);
     token.options.address = tokenAddress;
     return this.contracts.send(
       token,
@@ -500,7 +501,7 @@ export class Exchange {
     },
     options?: CallOptions,
   ): Promise<string> {
-    const token = this.contracts.collateralToken;
+    const token = new this.contracts.web3.eth.Contract((erc20Abi as Json).abi);
     token.options.address = tokenAddress;
     const allowance: string = await this.contracts.call(
       token.methods.allowance(
