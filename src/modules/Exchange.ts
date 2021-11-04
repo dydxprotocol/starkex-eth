@@ -499,21 +499,18 @@ export class Exchange {
       ownerAddress,
       spenderAddress,
       tokenAddress,
+      decimals,
     }: {
       ownerAddress: Address,
       spenderAddress: Address,
       tokenAddress: Address,
+      decimals: number,
     },
     options?: CallOptions,
   ): Promise<string> {
     const token = new this.contracts.web3.eth.Contract((erc20Abi as Json).abi, tokenAddress);
     const allowance: string = await this.contracts.call(
       token.methods.allowance(ownerAddress, spenderAddress),
-      options,
-    );
-
-    const decimals: number = await this.contracts.call(
-      token.methods.decimals(),
       options,
     );
     return uint256ToHumanTokenAmount(allowance, decimals);
