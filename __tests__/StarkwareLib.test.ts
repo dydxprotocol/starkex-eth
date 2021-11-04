@@ -7,7 +7,7 @@ import { Networks } from '../src/types';
 describe('StarwareLib#initiate', () => {
   const dummyProvider = new DummyProvider() as unknown as Provider;
 
-  it('Successfully intiates StarkwareLib on Ropsten', () => {
+  it('Successfully intiates StarkwareLib on Ropsten', async () => {
     const starkwareLib = new StarkwareLib(dummyProvider, Networks.ROPSTEN);
     expect(starkwareLib.collateralToken).toBeTruthy();
     expect(starkwareLib.contracts).toBeTruthy();

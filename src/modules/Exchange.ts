@@ -5,7 +5,6 @@ import {
   getZeroExSwapQuote,
   validateSlippage,
 } from '../clients/zeroEx';
-import erc20Abi from '../contracts/usdc-abi.json';
 import {
   COLLATERAL_ASSET_ID,
 } from '../lib/Constants';
@@ -16,7 +15,7 @@ import {
   uint256ToHumanCollateralTokenAmount,
   uint256ToHumanTokenAmount,
 } from '../lib/ContractCallHelpers';
-import { Contracts, Json } from '../lib/Contracts';
+import { Contracts } from '../lib/Contracts';
 import { getUsdcAddress } from '../lib/helpers';
 import {
   Address,
@@ -136,23 +135,11 @@ export class Exchange {
     options?: SendOptions,
   ): Promise<TxResult> {
     if (options?.sendGaslessTransaction) {
-      if (options.sendGaslessTransaction) {
-        return this.contracts.proxyDepositContract.methods.deposit(
-          humanCollateralAmountToUint256(humanAmount),
-          starkKeyToUint256(starkKey),
-          bignumberableToUint256(positionId),
-        ).send(options);
-      }
-
-      return this.contracts.send(
-        this.contracts.proxyDepositContract,
-        this.contracts.proxyDepositContract.methods.deposit(
-          humanCollateralAmountToUint256(humanAmount),
-          starkKeyToUint256(starkKey),
-          bignumberableToUint256(positionId),
-        ),
-        options,
-      );
+      return this.contracts.proxyDepositContract.methods.deposit(
+        humanCollateralAmountToUint256(humanAmount),
+        starkKeyToUint256(starkKey),
+        bignumberableToUint256(positionId),
+      ).send(options);
     }
 
     return this.contracts.send(
@@ -398,10 +385,15 @@ export class Exchange {
       amount: BigNumberable,
     },
     options?: CallOptions,
-  ): Promise<string> {
-    const token = new this.contracts.web3.eth.Contract((erc20Abi as Json).abi, tokenAddress);
-    return this.contracts.call(
-      token.methods.approve(address, amount),
+  ): Promise<TxResult> {
+    const token = this.contracts.collateralToken;
+    token.options.address = tokenAddress;
+    return this.contracts.send(
+      token,
+      token.methods.approve(
+        address,
+        amount,
+      ),
       options,
     );
   }
@@ -508,9 +500,13 @@ export class Exchange {
     },
     options?: CallOptions,
   ): Promise<string> {
-    const token = new this.contracts.web3.eth.Contract((erc20Abi as Json).abi, tokenAddress);
+    const token = this.contracts.collateralToken;
+    token.options.address = tokenAddress;
     const allowance: string = await this.contracts.call(
-      token.methods.allowance(ownerAddress, spenderAddress),
+      token.methods.allowance(
+        ownerAddress,
+        spenderAddress,
+      ),
       options,
     );
     return uint256ToHumanTokenAmount(allowance, decimals);
