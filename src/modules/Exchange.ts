@@ -128,12 +128,12 @@ export class Exchange {
       humanAmount,
       starkKey,
       positionId,
-      signature = Buffer.from('', 'utf8'),
+      registerUserSignature = Buffer.from('', 'utf8'),
     }: {
       humanAmount: string,
       starkKey: string,
       positionId: BigNumberable,
-      signature?: Buffer,
+      registerUserSignature?: Buffer,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
@@ -142,7 +142,7 @@ export class Exchange {
         humanCollateralAmountToUint256(humanAmount),
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
-        signature,
+        registerUserSignature,
       ).send(options);
     }
 
@@ -152,7 +152,7 @@ export class Exchange {
         humanCollateralAmountToUint256(humanAmount),
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
-        signature,
+        registerUserSignature,
       ),
       options,
     );
@@ -191,13 +191,13 @@ export class Exchange {
       starkKey,
       positionId,
       zeroExResponseObject,
-      signature = Buffer.from('', 'utf8'),
+      registerUserSignature = Buffer.from('', 'utf8'),
     }: {
       humanMinUsdcAmount: string,
       starkKey: string,
       positionId: BigNumberable,
       zeroExResponseObject: ZeroExSwapResponse,
-      signature?: Buffer,
+      registerUserSignature?: Buffer,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
@@ -210,7 +210,7 @@ export class Exchange {
         bignumberableToUint256(positionId),
         zeroExResponseObject.to,
         zeroExResponseObject.data,
-        signature,
+        registerUserSignature,
       ).send(options);
     }
 
@@ -224,7 +224,7 @@ export class Exchange {
         bignumberableToUint256(positionId),
         zeroExResponseObject.to,
         zeroExResponseObject.data,
-        signature,
+        registerUserSignature,
       ),
       options,
     );
@@ -236,13 +236,13 @@ export class Exchange {
       starkKey,
       positionId,
       zeroExResponseObject,
-      signature = Buffer.from('', 'utf8'),
+      registerUserSignature = Buffer.from('', 'utf8'),
     }: {
       humanMinUsdcAmount: string,
       starkKey: string,
       positionId: BigNumberable,
       zeroExResponseObject: ZeroExSwapResponse,
-      signature?: Buffer,
+      registerUserSignature?: Buffer,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
@@ -256,7 +256,7 @@ export class Exchange {
         zeroExResponseObject.to,
         zeroExResponseObject.allowanceTarget,
         zeroExResponseObject.data,
-        signature,
+        registerUserSignature,
       ).send(options);
     }
 
@@ -271,7 +271,7 @@ export class Exchange {
         zeroExResponseObject.to,
         zeroExResponseObject.allowanceTarget,
         zeroExResponseObject.data,
-        signature,
+        registerUserSignature,
       ),
       options,
     );
@@ -282,12 +282,12 @@ export class Exchange {
       starkKey,
       positionId,
       zeroExResponseObject,
-      signature = Buffer.from('', 'utf8'),
+      registerUserSignature = Buffer.from('', 'utf8'),
     }: {
       starkKey: string,
       positionId: BigNumberable,
       zeroExResponseObject: ZeroExSwapResponse,
-      signature?: Buffer,
+      registerUserSignature?: Buffer,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
@@ -304,7 +304,7 @@ export class Exchange {
         bignumberableToUint256(positionId),
         zeroExResponseObject.to,
         zeroExResponseObject.data,
-        signature,
+        registerUserSignature,
       ).send({ ...options, value: zeroExResponseObject.value });
     }
 
@@ -316,7 +316,7 @@ export class Exchange {
         bignumberableToUint256(positionId),
         zeroExResponseObject.to,
         zeroExResponseObject.data,
-        signature,
+        registerUserSignature,
       ),
       { ...options, value: zeroExResponseObject.value },
     );
