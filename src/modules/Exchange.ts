@@ -128,10 +128,12 @@ export class Exchange {
       humanAmount,
       starkKey,
       positionId,
+      signature = Buffer.from('', 'utf8'),
     }: {
       humanAmount: string,
       starkKey: string,
       positionId: BigNumberable,
+      signature?: Buffer,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
@@ -140,6 +142,7 @@ export class Exchange {
         humanCollateralAmountToUint256(humanAmount),
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
+        signature,
       ).send(options);
     }
 
@@ -149,6 +152,7 @@ export class Exchange {
         humanCollateralAmountToUint256(humanAmount),
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
+        signature,
       ),
       options,
     );
@@ -164,6 +168,13 @@ export class Exchange {
     },
     options?: SendOptions,
   ): Promise<TxResult> {
+    if (options?.sendGaslessTransaction) {
+      return this.contracts.proxyDepositContract.methods.approveSwap(
+        tokenFrom,
+        allowanceTarget,
+      ).send(options);
+    }
+
     return this.contracts.send(
       this.contracts.proxyDepositContract,
       this.contracts.proxyDepositContract.methods.approveSwap(
@@ -180,14 +191,29 @@ export class Exchange {
       starkKey,
       positionId,
       zeroExResponseObject,
+      signature = Buffer.from('', 'utf8'),
     }: {
       humanMinUsdcAmount: string,
       starkKey: string,
       positionId: BigNumberable,
       zeroExResponseObject: ZeroExSwapResponse,
+      signature?: Buffer,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
+    if (options?.sendGaslessTransaction) {
+      return this.contracts.proxyDepositContract.methods.depositERC20(
+        zeroExResponseObject.sellTokenAddress,
+        zeroExResponseObject.sellAmount,
+        humanCollateralAmountToUint256(humanMinUsdcAmount),
+        starkKeyToUint256(starkKey),
+        bignumberableToUint256(positionId),
+        zeroExResponseObject.to,
+        zeroExResponseObject.data,
+        signature,
+      ).send(options);
+    }
+
     return this.contracts.send(
       this.contracts.proxyDepositContract,
       this.contracts.proxyDepositContract.methods.depositERC20(
@@ -198,6 +224,7 @@ export class Exchange {
         bignumberableToUint256(positionId),
         zeroExResponseObject.to,
         zeroExResponseObject.data,
+        signature,
       ),
       options,
     );
@@ -209,14 +236,30 @@ export class Exchange {
       starkKey,
       positionId,
       zeroExResponseObject,
+      signature = Buffer.from('', 'utf8'),
     }: {
       humanMinUsdcAmount: string,
       starkKey: string,
       positionId: BigNumberable,
       zeroExResponseObject: ZeroExSwapResponse,
+      signature?: Buffer,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
+    if (options?.sendGaslessTransaction) {
+      return this.contracts.proxyDepositContract.methods.approveSwapAndDepositERC20(
+        zeroExResponseObject.sellTokenAddress,
+        zeroExResponseObject.sellAmount,
+        humanCollateralAmountToUint256(humanMinUsdcAmount),
+        starkKeyToUint256(starkKey),
+        bignumberableToUint256(positionId),
+        zeroExResponseObject.to,
+        zeroExResponseObject.allowanceTarget,
+        zeroExResponseObject.data,
+        signature,
+      ).send(options);
+    }
+
     return this.contracts.send(
       this.contracts.proxyDepositContract,
       this.contracts.proxyDepositContract.methods.approveSwapAndDepositERC20(
@@ -228,6 +271,7 @@ export class Exchange {
         zeroExResponseObject.to,
         zeroExResponseObject.allowanceTarget,
         zeroExResponseObject.data,
+        signature,
       ),
       options,
     );
@@ -238,10 +282,12 @@ export class Exchange {
       starkKey,
       positionId,
       zeroExResponseObject,
+      signature = Buffer.from('', 'utf8'),
     }: {
       starkKey: string,
       positionId: BigNumberable,
       zeroExResponseObject: ZeroExSwapResponse,
+      signature?: Buffer,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
@@ -249,6 +295,17 @@ export class Exchange {
       throw Error(
         `proxyDepositEth: A transaction value ${options.value} was provided which does not match the swap cost of ${zeroExResponseObject.value}`,
       );
+    }
+
+    if (options?.sendGaslessTransaction) {
+      return this.contracts.proxyDepositContract.methods.depositEth(
+        zeroExResponseObject.buyAmount,
+        starkKeyToUint256(starkKey),
+        bignumberableToUint256(positionId),
+        zeroExResponseObject.to,
+        zeroExResponseObject.data,
+        signature,
+      ).send({ ...options, value: zeroExResponseObject.value });
     }
 
     return this.contracts.send(
@@ -259,6 +316,7 @@ export class Exchange {
         bignumberableToUint256(positionId),
         zeroExResponseObject.to,
         zeroExResponseObject.data,
+        signature,
       ),
       { ...options, value: zeroExResponseObject.value },
     );

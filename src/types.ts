@@ -95,7 +95,7 @@ export interface ParsedLog extends Log {
 export interface ZeroExSwapResponse {
   guaranteedPrice: string,
   to: string,
-  data: string,
+  data: Buffer,
   value: string,
   buyAmount: string,
   sellAmount: string,
