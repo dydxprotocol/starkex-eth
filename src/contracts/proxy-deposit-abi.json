@@ -2,11 +2,11 @@
   "networks": {
     "1": {
       "links": {},
-      "address": "0x029bB89d64695D6A461eEbC1Aab4a4C8657a3f22"
+      "address": "0x174FBe9Bf9B8838c4DfA875c29368A17e8877E6A"
     },
     "3": {
       "links": {},
-      "address": "0x029bB89d64695D6A461eEbC1Aab4a4C8657a3f22"
+      "address": "0x174FBe9Bf9B8838c4DfA875c29368A17e8877E6A"
     }
   },
   "abi": [
@@ -26,6 +26,11 @@
           "internalType": "uint256",
           "name": "usdcAssetType",
           "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_trustedForwarder",
+          "type": "address"
         }
       ],
       "stateMutability": "nonpayable",
@@ -134,6 +139,11 @@
           "internalType": "bytes",
           "name": "data",
           "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "signature",
+          "type": "bytes"
         }
       ],
       "name": "approveSwapAndDepositERC20",
@@ -163,6 +173,11 @@
           "internalType": "uint256",
           "name": "positionId",
           "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "signature",
+          "type": "bytes"
         }
       ],
       "name": "deposit",
@@ -206,6 +221,11 @@
           "internalType": "bytes",
           "name": "data",
           "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "signature",
+          "type": "bytes"
         }
       ],
       "name": "depositERC20",
@@ -244,6 +264,11 @@
         {
           "internalType": "bytes",
           "name": "data",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "signature",
           "type": "bytes"
         }
       ],
@@ -300,7 +325,7 @@
           "type": "string"
         }
       ],
-      "stateMutability": "view",
+      "stateMutability": "pure",
       "type": "function"
     }
   ]
