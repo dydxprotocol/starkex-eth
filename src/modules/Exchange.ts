@@ -12,6 +12,7 @@ import {
 import {
   bignumberableToUint256,
   humanCollateralAmountToUint256,
+  humanTokenAmountToUint256,
   starkKeyToUint256,
   uint256ToHumanCollateralTokenAmount,
   uint256ToHumanTokenAmount,
@@ -330,10 +331,12 @@ export class Exchange {
     {
       humanSellAmount,
       sellToken,
+      decimals,
       slippageFraction,
     }: {
       humanSellAmount: string,
       sellToken: string,
+      decimals: number,
       slippageFraction?: string,
     },
   ): Promise<{
@@ -343,7 +346,7 @@ export class Exchange {
     }> {
     validateSlippage(slippageFraction);
 
-    const sellAmount: string = humanCollateralAmountToUint256(humanSellAmount);
+    const sellAmount: string = humanTokenAmountToUint256(humanSellAmount, decimals);
 
     const zeroExResponseObject: ZeroExSwapResponse = await getZeroExSwapQuote(
       {
