@@ -280,11 +280,13 @@ export class Exchange {
 
   public async proxyDepositEth(
     {
+      humanMinUsdcAmount,
       starkKey,
       positionId,
       zeroExResponseObject,
       registerUserSignature = Buffer.from('', 'utf8'),
     }: {
+      humanMinUsdcAmount: string,
       starkKey: string,
       positionId: BigNumberable,
       zeroExResponseObject: ZeroExSwapResponse,
@@ -300,7 +302,7 @@ export class Exchange {
 
     if (options?.sendGaslessTransaction) {
       return this.contracts.proxyDepositContract.methods.depositEth(
-        zeroExResponseObject.buyAmount,
+        humanCollateralAmountToUint256(humanMinUsdcAmount),
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
         zeroExResponseObject.to,
@@ -312,7 +314,7 @@ export class Exchange {
     return this.contracts.send(
       this.contracts.proxyDepositContract,
       this.contracts.proxyDepositContract.methods.depositEth(
-        zeroExResponseObject.buyAmount,
+        humanCollateralAmountToUint256(humanMinUsdcAmount),
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
         zeroExResponseObject.to,
