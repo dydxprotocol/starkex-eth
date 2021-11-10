@@ -363,8 +363,9 @@ export class Exchange {
     const expectedUsdcHumanAmount: Big = Big(zeroExResponseObject.buyAmount);
     expectedUsdcHumanAmount.e -= BASE_DECIMALS;
 
-    const worstUsdcHumanAmount: Big = Big(sellAmount).div(zeroExResponseObject.guaranteedPrice);
-    worstUsdcHumanAmount.e -= BASE_DECIMALS;
+    const worstUsdcHumanAmount: Big = Big(
+      humanSellAmount,
+    ).mul(zeroExResponseObject.guaranteedPrice);
 
     return {
       expectedUsdcHumanAmount: expectedUsdcHumanAmount.round(BASE_DECIMALS, 0).toString(),
