@@ -28,6 +28,7 @@ export async function sendGaslessTransaction(contractCall: PromiEvent<Contract>)
   const transactionHash = await new Promise(
     (resolve, reject) => {
       contractCall.on('error', (error: Error) => {
+        // has not reached a transactionHash or error yet
         if (hashOutcome === OUTCOMES.INITIAL) {
           hashOutcome = OUTCOMES.REJECTED;
           reject(error);
@@ -36,6 +37,7 @@ export async function sendGaslessTransaction(contractCall: PromiEvent<Contract>)
       });
 
       contractCall.on('transactionHash', (txHash: string) => {
+        // has not reached a transactionHash or error yet
         if (hashOutcome === OUTCOMES.INITIAL) {
           hashOutcome = OUTCOMES.RESOLVED;
           resolve(txHash);
