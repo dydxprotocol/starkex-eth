@@ -13,13 +13,13 @@ export async function getZeroExSwapQuote({
   sellAmount,
   sellToken,
   buyTokenAddress,
-  slippageFraction,
+  slippagePercentage,
   networkId,
 }: {
   sellAmount: string,
   sellToken: string,
   buyTokenAddress: string,
-  slippageFraction?: string,
+  slippagePercentage?: string,
   networkId: number,
 }): Promise<ZeroExSwapResponse> {
   return axiosRequest({
@@ -30,7 +30,7 @@ export async function getZeroExSwapQuote({
         sellAmount,
         sellToken,
         buyToken: buyTokenAddress,
-        slippageFraction,
+        slippagePercentage,
       },
     ),
   }) as Promise<ZeroExSwapResponse>;
