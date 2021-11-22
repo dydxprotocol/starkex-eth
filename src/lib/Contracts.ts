@@ -44,12 +44,7 @@ import {
   TxOptions,
   NativeSendOptions,
 } from '../types';
-
-enum OUTCOMES {
-  INITIAL = 0,
-  RESOLVED = 1,
-  REJECTED = 2,
-}
+import { normalizeResponse, OUTCOMES } from './helpers';
 
 export interface Json {
   abi: any;
@@ -261,7 +256,7 @@ export class Contracts {
         },
       );
       const stResult = await stPromise;
-      return this.normalizeResponse({ transactionHash: stResult });
+      return normalizeResponse({ transactionHash: stResult });
     }
 
     const promi: PromiEvent<Contract> | any = method.send(
@@ -342,14 +337,14 @@ export class Contracts {
     }
 
     if (confirmationType === ConfirmationType.Hash) {
-      return this.normalizeResponse({ transactionHash });
+      return normalizeResponse({ transactionHash });
     }
 
     if (confirmationType === ConfirmationType.Confirmed) {
       return confirmationPromise;
     }
 
-    return this.normalizeResponse({
+    return normalizeResponse({
       transactionHash,
       confirmation: confirmationPromise,
     });
@@ -404,24 +399,5 @@ export class Contracts {
       'gas',
       'nonce',
     ]);
-  }
-
-  private normalizeResponse(
-    txResult: any,
-  ): any {
-    const txHash = txResult.transactionHash;
-    if (txHash) {
-      const {
-        transactionHash: internalHash,
-        nonce: internalNonce,
-      } = txHash;
-      if (internalHash) {
-        txResult.transactionHash = internalHash;
-      }
-      if (internalNonce) {
-        txResult.nonce = internalNonce;
-      }
-    }
-    return txResult;
   }
 }
