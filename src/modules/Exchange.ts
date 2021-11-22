@@ -18,7 +18,7 @@ import {
   uint256ToHumanTokenAmount,
 } from '../lib/ContractCallHelpers';
 import { Contracts, Json } from '../lib/Contracts';
-import { getUsdcAddress } from '../lib/helpers';
+import { getUsdcAddress, sendGaslessTransaction } from '../lib/helpers';
 import {
   Address,
   BigNumberable,
@@ -139,12 +139,14 @@ export class Exchange {
     options?: SendOptions,
   ): Promise<TxResult> {
     if (options?.sendGaslessTransaction) {
-      return this.contracts.proxyDepositContract.methods.deposit(
-        humanCollateralAmountToUint256(humanAmount),
-        starkKeyToUint256(starkKey),
-        bignumberableToUint256(positionId),
-        registerUserSignature,
-      ).send(options);
+      return sendGaslessTransaction(
+        this.contracts.proxyDepositContract.methods.deposit(
+          humanCollateralAmountToUint256(humanAmount),
+          starkKeyToUint256(starkKey),
+          bignumberableToUint256(positionId),
+          registerUserSignature,
+        ).send(options),
+      );
     }
 
     return this.contracts.send(
@@ -170,10 +172,13 @@ export class Exchange {
     options?: SendOptions,
   ): Promise<TxResult> {
     if (options?.sendGaslessTransaction) {
-      return this.contracts.proxyDepositContract.methods.approveSwap(
-        tokenFrom,
-        allowanceTarget,
-      ).send(options);
+
+      return sendGaslessTransaction(
+        this.contracts.proxyDepositContract.methods.approveSwap(
+          tokenFrom,
+          allowanceTarget,
+        ).send(options),
+      );
     }
 
     return this.contracts.send(
@@ -203,16 +208,18 @@ export class Exchange {
     options?: SendOptions,
   ): Promise<TxResult> {
     if (options?.sendGaslessTransaction) {
-      return this.contracts.proxyDepositContract.methods.depositERC20(
-        zeroExResponseObject.sellTokenAddress,
-        zeroExResponseObject.sellAmount,
-        humanCollateralAmountToUint256(humanMinUsdcAmount),
-        starkKeyToUint256(starkKey),
-        bignumberableToUint256(positionId),
-        zeroExResponseObject.to,
-        zeroExResponseObject.data,
-        registerUserSignature,
-      ).send(options);
+      return sendGaslessTransaction(
+        this.contracts.proxyDepositContract.methods.depositERC20(
+          zeroExResponseObject.sellTokenAddress,
+          zeroExResponseObject.sellAmount,
+          humanCollateralAmountToUint256(humanMinUsdcAmount),
+          starkKeyToUint256(starkKey),
+          bignumberableToUint256(positionId),
+          zeroExResponseObject.to,
+          zeroExResponseObject.data,
+          registerUserSignature,
+        ).send(options),
+      );
     }
 
     return this.contracts.send(
@@ -248,17 +255,19 @@ export class Exchange {
     options?: SendOptions,
   ): Promise<TxResult> {
     if (options?.sendGaslessTransaction) {
-      return this.contracts.proxyDepositContract.methods.approveSwapAndDepositERC20(
-        zeroExResponseObject.sellTokenAddress,
-        zeroExResponseObject.sellAmount,
-        humanCollateralAmountToUint256(humanMinUsdcAmount),
-        starkKeyToUint256(starkKey),
-        bignumberableToUint256(positionId),
-        zeroExResponseObject.to,
-        zeroExResponseObject.allowanceTarget,
-        zeroExResponseObject.data,
-        registerUserSignature,
-      ).send(options);
+      return sendGaslessTransaction(
+        this.contracts.proxyDepositContract.methods.approveSwapAndDepositERC20(
+          zeroExResponseObject.sellTokenAddress,
+          zeroExResponseObject.sellAmount,
+          humanCollateralAmountToUint256(humanMinUsdcAmount),
+          starkKeyToUint256(starkKey),
+          bignumberableToUint256(positionId),
+          zeroExResponseObject.to,
+          zeroExResponseObject.allowanceTarget,
+          zeroExResponseObject.data,
+          registerUserSignature,
+        ).send(options),
+      );
     }
 
     return this.contracts.send(
@@ -301,14 +310,16 @@ export class Exchange {
     }
 
     if (options?.sendGaslessTransaction) {
-      return this.contracts.proxyDepositContract.methods.depositEth(
-        humanCollateralAmountToUint256(humanMinUsdcAmount),
-        starkKeyToUint256(starkKey),
-        bignumberableToUint256(positionId),
-        zeroExResponseObject.to,
-        zeroExResponseObject.data,
-        registerUserSignature,
-      ).send({ ...options, value: zeroExResponseObject.value });
+      return sendGaslessTransaction(
+        this.contracts.proxyDepositContract.methods.depositEth(
+          humanCollateralAmountToUint256(humanMinUsdcAmount),
+          starkKeyToUint256(starkKey),
+          bignumberableToUint256(positionId),
+          zeroExResponseObject.to,
+          zeroExResponseObject.data,
+          registerUserSignature,
+        ).send({ ...options, value: zeroExResponseObject.value }),
+      );
     }
 
     return this.contracts.send(
