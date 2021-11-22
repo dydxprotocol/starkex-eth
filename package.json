@@ -1,6 +1,6 @@
 {
   "name": "@dydxprotocol/starkex-eth",
-  "version": "0.12.10",
+  "version": "0.12.11",
   "description": "Cryptographic functions for use with StarkEx",
   "main": "build/src/index.js",
   "scripts": {

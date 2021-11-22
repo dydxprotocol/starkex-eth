@@ -334,19 +334,19 @@ export class Exchange {
       humanSellAmount,
       sellToken,
       decimals,
-      slippageFraction,
+      slippagePercentage,
     }: {
       humanSellAmount: string,
       sellToken: string,
       decimals: number,
-      slippageFraction?: string,
+      slippagePercentage?: string,
     },
   ): Promise<{
       expectedUsdcHumanAmount: string,
       worstUsdcHumanAmount: string,
       zeroExResponseObject: ZeroExSwapResponse,
     }> {
-    validateSlippage(slippageFraction);
+    validateSlippage(slippagePercentage);
 
     const sellAmount: string = humanTokenAmountToUint256(humanSellAmount, decimals);
 
@@ -355,7 +355,7 @@ export class Exchange {
         sellAmount,
         sellToken,
         buyTokenAddress: getUsdcAddress(this.contracts.networkId),
-        slippageFraction,
+        slippagePercentage,
         networkId: this.contracts.networkId,
       },
     );
