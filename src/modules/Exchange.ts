@@ -1,6 +1,6 @@
 import Big from 'big.js';
 import BigNumber from 'bignumber.js';
-import { at } from 'lodash';
+import _ from 'lodash';
 
 import {
   getZeroExSwapQuote,
@@ -529,11 +529,11 @@ export class Exchange {
     return uint256ToHumanTokenAmount(allowance, decimals);
   }
 
-  encodeZeroExExchangeData(
+  private encodeZeroExExchangeData(
     proxyExchangeData: {
       tokenFrom: string,
       allowanceTarget: string,
-      minUsdcAmount: string,
+      minUsdcAmount: BigNumberable,
       exchange: string,
       exchangeData: string,
     },
@@ -546,7 +546,7 @@ export class Exchange {
         'address',
         'bytes',
       ],
-      at(
+      _.at(
         proxyExchangeData,
         [
           'tokenFrom',

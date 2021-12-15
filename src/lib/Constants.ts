@@ -17,6 +17,7 @@ export const COLLATERAL_ASSET_ID = {
   [Networks.ROPSTEN]: getAssetId(usdcAbi.networks[3].address),
 };
 
+// TODO fix zero ex addresses and contract abi addresses for proxy-deposit
 export const ADDRESSES = {
   ZERO: '0x0000000000000000000000000000000000000000',
   DYDX_USDC_ADDRESS_ROPSTEN: '0x8707a5bf4c2842d46b31a405ba41b858c0f876c4',
