@@ -9,7 +9,8 @@ import {
 import erc20Abi from '../contracts/ierc20-abi.json';
 import {
   ADDRESSES,
-  COLLATERAL_ASSET_ID, ZERO_EX_EXCHANGE_ADDRESSES,
+  COLLATERAL_ASSET_ID,
+  USDC_EXCHANGE_ADDRESSES,
 } from '../lib/Constants';
 import {
   bignumberableToUint256,
@@ -198,7 +199,7 @@ export class Exchange {
           zeroExResponseObject.sellAmount,
           starkKeyToUint256(starkKey),
           bignumberableToUint256(positionId),
-          ZERO_EX_EXCHANGE_ADDRESSES[this.contracts.networkId],
+          USDC_EXCHANGE_ADDRESSES[this.contracts.networkId],
           exchangeProxyData,
           registerUserSignature,
         ).send(options),
@@ -212,7 +213,7 @@ export class Exchange {
         zeroExResponseObject.sellAmount,
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
-        ZERO_EX_EXCHANGE_ADDRESSES[this.contracts.networkId],
+        USDC_EXCHANGE_ADDRESSES[this.contracts.networkId],
         exchangeProxyData,
         registerUserSignature,
       ),
@@ -257,7 +258,7 @@ export class Exchange {
         this.contracts.proxyDepositContract.methods.depositEth(
           starkKeyToUint256(starkKey),
           bignumberableToUint256(positionId),
-          ZERO_EX_EXCHANGE_ADDRESSES[this.contracts.networkId],
+          USDC_EXCHANGE_ADDRESSES[this.contracts.networkId],
           exchangeProxyData,
           registerUserSignature,
         ).send({ ...options, value: zeroExResponseObject.value }),
@@ -269,7 +270,7 @@ export class Exchange {
       this.contracts.proxyDepositContract.methods.depositEth(
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
-        ZERO_EX_EXCHANGE_ADDRESSES[this.contracts.networkId],
+        USDC_EXCHANGE_ADDRESSES[this.contracts.networkId],
         exchangeProxyData,
         registerUserSignature,
       ),
