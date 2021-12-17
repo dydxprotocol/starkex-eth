@@ -228,14 +228,12 @@ export class Exchange {
       positionId,
       zeroExResponseObject,
       registerUserSignature = Buffer.from('', 'utf8'),
-      getExchangeApproval = false,
     }: {
       humanMinUsdcAmount: string,
       starkKey: string,
       positionId: BigNumberable,
       zeroExResponseObject: ZeroExSwapResponse,
       registerUserSignature?: Buffer,
-      getExchangeApproval?: boolean,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
@@ -247,7 +245,7 @@ export class Exchange {
 
     const exchangeProxyData: string = this.encodeZeroExExchangeData({
       tokenFrom: ADDRESSES.ZERO,
-      allowanceTarget: getExchangeApproval ? zeroExResponseObject.allowanceTarget : ADDRESSES.ZERO,
+      allowanceTarget: ADDRESSES.ZERO,
       minUsdcAmount: humanCollateralAmountToUint256(humanMinUsdcAmount),
       exchange: zeroExResponseObject.to,
       exchangeData: zeroExResponseObject.data.toString(),
