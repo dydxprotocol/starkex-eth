@@ -17,13 +17,12 @@ export const COLLATERAL_ASSET_ID = {
   [Networks.ROPSTEN]: getAssetId(usdcAbi.networks[3].address),
 };
 
-// TODO fix usdc ex address for PROD and contract abi addresses for proxy-deposit
 export const ADDRESSES = {
   ZERO: '0x0000000000000000000000000000000000000000',
   DYDX_USDC_ADDRESS_ROPSTEN: '0x8707a5bf4c2842d46b31a405ba41b858c0f876c4',
   USDC_ADDRESS_MAINNET: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
   USDC_EXCHANGE_ADDRESS_ROPSTEN: '0x144b40e133495811e1d5fd64ab73ed40186ecb17',
-  USDC_EXCHANGE_ADDRESS_MAINNET: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+  USDC_EXCHANGE_ADDRESS_MAINNET: '0x032B17633C956C10845643f0Bf9Ea7C16a3cFB62',
 };
 
 export const USDC_ADDRESSES: {[networkId: number]: string } = {
