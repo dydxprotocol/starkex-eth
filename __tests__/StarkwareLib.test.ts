@@ -11,7 +11,7 @@ jest.setTimeout(40000);
 describe('StarwareLib#initiate', () => {
   const dummyProvider = new DummyProvider() as unknown as Provider;
 
-  it('Successfully intiates StarkwareLib on Ropsten', async () => {
+  it('Successfully initiates StarkwareLib on Ropsten', async () => {
     const starkwareLib = new StarkwareLib(dummyProvider, Networks.ROPSTEN);
     expect(starkwareLib.collateralToken).toBeTruthy();
     expect(starkwareLib.contracts).toBeTruthy();
@@ -46,7 +46,8 @@ describe('StarwareLib#initiate', () => {
 
       expect(result).toEqual('0.000001');
     } catch (error) {
-      console.log(error);
+      // eslint-disable-next-line no-console
+      console.error(error);
     }
   });
 });
