@@ -293,10 +293,10 @@ export class Exchange {
       slippagePercentage?: string,
     },
   ): Promise<{
-      expectedUsdcHumanAmount: string,
-      worstUsdcHumanAmount: string,
-      zeroExResponseObject: ZeroExSwapResponse,
-    }> {
+    expectedUsdcHumanAmount: string,
+    worstUsdcHumanAmount: string,
+    zeroExResponseObject: ZeroExSwapResponse,
+  }> {
     validateSlippage(slippagePercentage);
 
     const sellAmount: string = humanTokenAmountToUint256(humanSellAmount, decimals);
