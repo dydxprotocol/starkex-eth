@@ -27,6 +27,7 @@ export async function getZeroExSwapQuote({
     url: generateQueryPath(
       zeroExUrlMap[networkId],
       {
+        affiliateAddress: '0xB03fc94a3c49B3126A4E6523D10b65d82C44729C',
         sellAmount,
         sellToken,
         buyToken: buyTokenAddress,
