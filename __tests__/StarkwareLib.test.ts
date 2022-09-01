@@ -6,13 +6,10 @@ import { StarkwareLib } from '../src/index';
 import { Networks } from '../src/types';
 import { DummyProvider } from './helpers/DummyProvider';
 
-// async ropsten calls can take >10k MS
-jest.setTimeout(40000);
-
 describe('StarwareLib#initiate', () => {
   const dummyProvider = new DummyProvider() as unknown as Provider;
 
-  it('Successfully initiates StarkwareLib on Ropsten', async () => {
+  it('Successfully initiates StarkwareLib on Goerli', async () => {
     const starkwareLib = new StarkwareLib(dummyProvider, Networks.GOERLI);
     expect(starkwareLib.collateralToken).toBeTruthy();
     expect(starkwareLib.contracts).toBeTruthy();
