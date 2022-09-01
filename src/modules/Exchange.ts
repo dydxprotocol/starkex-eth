@@ -8,9 +8,9 @@ import {
 } from '../clients/zeroEx';
 import erc20Abi from '../contracts/ierc20-abi.json';
 import {
-  ADDRESSES,
   COLLATERAL_ASSET_ID,
   USDC_EXCHANGE_ADDRESSES,
+  ZERO_ADDRESS,
 } from '../lib/Constants';
 import {
   bignumberableToUint256,
@@ -20,13 +20,19 @@ import {
   uint256ToHumanCollateralTokenAmount,
   uint256ToHumanTokenAmount,
 } from '../lib/ContractCallHelpers';
-import { Contracts, Json } from '../lib/Contracts';
-import { getUsdcAddress, sendGaslessTransaction } from '../lib/helpers';
+import {
+  Contracts,
+  Json,
+} from '../lib/Contracts';
+import {
+  getUsdcAddress,
+  sendGaslessTransaction,
+} from '../lib/helpers';
 import {
   Address,
+  BASE_DECIMALS,
   BigNumberable,
   CallOptions,
-  BASE_DECIMALS,
   SendOptions,
   TxResult,
   ZeroExSwapResponse,
@@ -185,8 +191,8 @@ export class Exchange {
     options?: SendOptions,
   ): Promise<TxResult> {
     const exchangeProxyData: string = this.encodeZeroExExchangeData({
-      tokenFrom: getTokenApproval ? zeroExResponseObject.sellTokenAddress : ADDRESSES.ZERO,
-      allowanceTarget: getExchangeApproval ? zeroExResponseObject.allowanceTarget : ADDRESSES.ZERO,
+      tokenFrom: getTokenApproval ? zeroExResponseObject.sellTokenAddress : ZERO_ADDRESS,
+      allowanceTarget: getExchangeApproval ? zeroExResponseObject.allowanceTarget : ZERO_ADDRESS,
       minUsdcAmount: humanCollateralAmountToUint256(humanMinUsdcAmount),
       exchange: zeroExResponseObject.to,
       exchangeData: zeroExResponseObject.data.toString(),
@@ -244,8 +250,8 @@ export class Exchange {
     }
 
     const exchangeProxyData: string = this.encodeZeroExExchangeData({
-      tokenFrom: ADDRESSES.ZERO,
-      allowanceTarget: ADDRESSES.ZERO,
+      tokenFrom: ZERO_ADDRESS,
+      allowanceTarget: ZERO_ADDRESS,
       minUsdcAmount: humanCollateralAmountToUint256(humanMinUsdcAmount),
       exchange: zeroExResponseObject.to,
       exchangeData: zeroExResponseObject.data.toString(),

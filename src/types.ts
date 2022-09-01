@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js';
 import {
-  TransactionReceipt,
-  Log,
   EventLog,
+  Log,
+  TransactionReceipt,
 } from 'web3-core';
 
 export type Address = string;
@@ -15,6 +15,7 @@ export type ParsedLogValue = BigNumber | string | number | boolean;
 export const Networks = {
   MAINNET: 1,
   ROPSTEN: 3,
+  GOERLI: 5,
   KOVAN: 42,
 };
 

@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 
-import { ADDRESSES } from '../lib/Constants';
+import { ZERO_ADDRESS } from '../lib/Constants';
 import {
   bignumberableToUint256,
   humanCollateralAmountToUint256,
@@ -41,7 +41,7 @@ export class FactRegistry {
     },
   ): string {
     return this.getTransferErc20Fact({
-      tokenAddress: ADDRESSES.ZERO,
+      tokenAddress: ZERO_ADDRESS,
       tokenDecimals: 18,
       recipient,
       humanAmount,
