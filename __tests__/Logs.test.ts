@@ -1,8 +1,8 @@
 import { provider as Provider } from 'web3-core';
 
 import { StarkwareLib } from '../src/index';
-import { DummyProvider } from './helpers/DummyProvider';
 import { Networks } from '../src/types';
+import { DummyProvider } from './helpers/DummyProvider';
 
 const dummyProvider = new DummyProvider() as unknown as Provider;
 let starkwareLib: StarkwareLib;
@@ -21,7 +21,7 @@ const defaultLog = {
 describe('Logs', () => {
 
   beforeAll(() => {
-    starkwareLib = new StarkwareLib(dummyProvider, Networks.ROPSTEN);
+    starkwareLib = new StarkwareLib(dummyProvider, Networks.GOERLI);
   });
 
   it('Successfully parses transfer logs', () => {

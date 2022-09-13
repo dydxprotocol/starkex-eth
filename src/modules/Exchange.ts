@@ -1,26 +1,38 @@
 import Big from 'big.js';
 import BigNumber from 'bignumber.js';
+import _ from 'lodash';
 
 import {
   getZeroExSwapQuote,
   validateSlippage,
 } from '../clients/zeroEx';
+import erc20Abi from '../contracts/ierc20-abi.json';
 import {
   COLLATERAL_ASSET_ID,
+  USDC_EXCHANGE_ADDRESSES,
+  ZERO_ADDRESS,
 } from '../lib/Constants';
 import {
   bignumberableToUint256,
   humanCollateralAmountToUint256,
+  humanTokenAmountToUint256,
   starkKeyToUint256,
   uint256ToHumanCollateralTokenAmount,
+  uint256ToHumanTokenAmount,
 } from '../lib/ContractCallHelpers';
-import { Contracts } from '../lib/Contracts';
-import { getUsdcAddress } from '../lib/heleprs';
+import {
+  Contracts,
+  Json,
+} from '../lib/Contracts';
+import {
+  getUsdcAddress,
+  sendGaslessTransaction,
+} from '../lib/helpers';
 import {
   Address,
+  BASE_DECIMALS,
   BigNumberable,
   CallOptions,
-  BASE_DECIMALS,
   SendOptions,
   TxResult,
   ZeroExSwapResponse,
@@ -126,39 +138,33 @@ export class Exchange {
       humanAmount,
       starkKey,
       positionId,
+      registerUserSignature = Buffer.from('', 'utf8'),
     }: {
       humanAmount: string,
       starkKey: string,
       positionId: BigNumberable,
+      registerUserSignature?: Buffer,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
+    if (options?.sendGaslessTransaction) {
+      return sendGaslessTransaction(
+        this.contracts.proxyDepositContract.methods.deposit(
+          humanCollateralAmountToUint256(humanAmount),
+          starkKeyToUint256(starkKey),
+          bignumberableToUint256(positionId),
+          registerUserSignature,
+        ).send(options),
+      );
+    }
+
     return this.contracts.send(
       this.contracts.proxyDepositContract,
       this.contracts.proxyDepositContract.methods.deposit(
         humanCollateralAmountToUint256(humanAmount),
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
-      ),
-      options,
-    );
-  }
-
-  public async approveSwap(
-    {
-      tokenFrom,
-      allowanceTarget,
-    }: {
-      tokenFrom: string,
-      allowanceTarget: string,
-    },
-    options?: SendOptions,
-  ): Promise<TxResult> {
-    return this.contracts.send(
-      this.contracts.proxyDepositContract,
-      this.contracts.proxyDepositContract.methods.approveSwap(
-        tokenFrom,
-        allowanceTarget,
+        registerUserSignature,
       ),
       options,
     );
@@ -170,54 +176,52 @@ export class Exchange {
       starkKey,
       positionId,
       zeroExResponseObject,
+      registerUserSignature = Buffer.from('', 'utf8'),
+      getTokenApproval = false,
+      getExchangeApproval = false,
     }: {
       humanMinUsdcAmount: string,
       starkKey: string,
       positionId: BigNumberable,
       zeroExResponseObject: ZeroExSwapResponse,
+      registerUserSignature?: Buffer,
+      getTokenApproval?: boolean,
+      getExchangeApproval?: boolean,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
+    const exchangeProxyData: string = this.encodeZeroExExchangeData({
+      tokenFrom: getTokenApproval ? zeroExResponseObject.sellTokenAddress : ZERO_ADDRESS,
+      allowanceTarget: getExchangeApproval ? zeroExResponseObject.allowanceTarget : ZERO_ADDRESS,
+      minUsdcAmount: humanCollateralAmountToUint256(humanMinUsdcAmount),
+      exchange: zeroExResponseObject.to,
+      exchangeData: zeroExResponseObject.data.toString(),
+    });
+
+    if (options?.sendGaslessTransaction) {
+      return sendGaslessTransaction(
+        this.contracts.proxyDepositContract.methods.depositERC20(
+          zeroExResponseObject.sellTokenAddress,
+          zeroExResponseObject.sellAmount,
+          starkKeyToUint256(starkKey),
+          bignumberableToUint256(positionId),
+          USDC_EXCHANGE_ADDRESSES[this.contracts.networkId],
+          exchangeProxyData,
+          registerUserSignature,
+        ).send(options),
+      );
+    }
+
     return this.contracts.send(
       this.contracts.proxyDepositContract,
       this.contracts.proxyDepositContract.methods.depositERC20(
         zeroExResponseObject.sellTokenAddress,
         zeroExResponseObject.sellAmount,
-        humanCollateralAmountToUint256(humanMinUsdcAmount),
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
-        zeroExResponseObject.to,
-        zeroExResponseObject.data,
-      ),
-      options,
-    );
-  }
-
-  public async approveSwapAndProxyDepositERC20(
-    {
-      humanMinUsdcAmount,
-      starkKey,
-      positionId,
-      zeroExResponseObject,
-    }: {
-      humanMinUsdcAmount: string,
-      starkKey: string,
-      positionId: BigNumberable,
-      zeroExResponseObject: ZeroExSwapResponse,
-    },
-    options?: SendOptions,
-  ): Promise<TxResult> {
-    return this.contracts.send(
-      this.contracts.proxyDepositContract,
-      this.contracts.proxyDepositContract.methods.approveSwapAndDepositERC20(
-        zeroExResponseObject.sellTokenAddress,
-        zeroExResponseObject.sellAmount,
-        humanCollateralAmountToUint256(humanMinUsdcAmount),
-        starkKeyToUint256(starkKey),
-        bignumberableToUint256(positionId),
-        zeroExResponseObject.to,
-        zeroExResponseObject.allowanceTarget,
-        zeroExResponseObject.data,
+        USDC_EXCHANGE_ADDRESSES[this.contracts.networkId],
+        exchangeProxyData,
+        registerUserSignature,
       ),
       options,
     );
@@ -225,13 +229,17 @@ export class Exchange {
 
   public async proxyDepositEth(
     {
+      humanMinUsdcAmount,
       starkKey,
       positionId,
       zeroExResponseObject,
+      registerUserSignature = Buffer.from('', 'utf8'),
     }: {
+      humanMinUsdcAmount: string,
       starkKey: string,
       positionId: BigNumberable,
       zeroExResponseObject: ZeroExSwapResponse,
+      registerUserSignature?: Buffer,
     },
     options?: SendOptions,
   ): Promise<TxResult> {
@@ -241,14 +249,34 @@ export class Exchange {
       );
     }
 
+    const exchangeProxyData: string = this.encodeZeroExExchangeData({
+      tokenFrom: ZERO_ADDRESS,
+      allowanceTarget: ZERO_ADDRESS,
+      minUsdcAmount: humanCollateralAmountToUint256(humanMinUsdcAmount),
+      exchange: zeroExResponseObject.to,
+      exchangeData: zeroExResponseObject.data.toString(),
+    });
+
+    if (options?.sendGaslessTransaction) {
+      return sendGaslessTransaction(
+        this.contracts.proxyDepositContract.methods.depositEth(
+          starkKeyToUint256(starkKey),
+          bignumberableToUint256(positionId),
+          USDC_EXCHANGE_ADDRESSES[this.contracts.networkId],
+          exchangeProxyData,
+          registerUserSignature,
+        ).send({ ...options, value: zeroExResponseObject.value }),
+      );
+    }
+
     return this.contracts.send(
       this.contracts.proxyDepositContract,
       this.contracts.proxyDepositContract.methods.depositEth(
-        zeroExResponseObject.buyAmount,
         starkKeyToUint256(starkKey),
         bignumberableToUint256(positionId),
-        zeroExResponseObject.to,
-        zeroExResponseObject.data,
+        USDC_EXCHANGE_ADDRESSES[this.contracts.networkId],
+        exchangeProxyData,
+        registerUserSignature,
       ),
       { ...options, value: zeroExResponseObject.value },
     );
@@ -262,27 +290,29 @@ export class Exchange {
     {
       humanSellAmount,
       sellToken,
-      slippageFraction,
+      decimals,
+      slippagePercentage,
     }: {
       humanSellAmount: string,
       sellToken: string,
-      slippageFraction?: string,
+      decimals: number,
+      slippagePercentage?: string,
     },
   ): Promise<{
-      expectedUsdcHumanAmount: string,
-      worstUsdcHumanAmount: string,
-      zeroExResponseObject: ZeroExSwapResponse,
-    }> {
-    validateSlippage(slippageFraction);
+    expectedUsdcHumanAmount: string,
+    worstUsdcHumanAmount: string,
+    zeroExResponseObject: ZeroExSwapResponse,
+  }> {
+    validateSlippage(slippagePercentage);
 
-    const sellAmount: string = humanCollateralAmountToUint256(humanSellAmount);
+    const sellAmount: string = humanTokenAmountToUint256(humanSellAmount, decimals);
 
     const zeroExResponseObject: ZeroExSwapResponse = await getZeroExSwapQuote(
       {
         sellAmount,
         sellToken,
         buyTokenAddress: getUsdcAddress(this.contracts.networkId),
-        slippageFraction,
+        slippagePercentage,
         networkId: this.contracts.networkId,
       },
     );
@@ -290,8 +320,9 @@ export class Exchange {
     const expectedUsdcHumanAmount: Big = Big(zeroExResponseObject.buyAmount);
     expectedUsdcHumanAmount.e -= BASE_DECIMALS;
 
-    const worstUsdcHumanAmount: Big = Big(sellAmount).div(zeroExResponseObject.guaranteedPrice);
-    worstUsdcHumanAmount.e -= BASE_DECIMALS;
+    const worstUsdcHumanAmount: Big = Big(
+      humanSellAmount,
+    ).mul(zeroExResponseObject.guaranteedPrice);
 
     return {
       expectedUsdcHumanAmount: expectedUsdcHumanAmount.round(BASE_DECIMALS, 0).toString(),
@@ -360,6 +391,30 @@ export class Exchange {
         bignumberableToUint256(positionId),
         humanCollateralAmountToUint256(humanAmount),
         premiumCost,
+      ),
+      options,
+    );
+  }
+
+  public async setERC20Allowance(
+    {
+      tokenAddress,
+      address,
+      amount,
+    }: {
+      tokenAddress: Address,
+      address: Address,
+      amount: BigNumberable,
+    },
+    options?: CallOptions,
+  ): Promise<TxResult> {
+    const token = new this.contracts.web3.eth.Contract((erc20Abi as Json).abi);
+    token.options.address = tokenAddress;
+    return this.contracts.send(
+      token,
+      token.methods.approve(
+        address,
+        amount,
       ),
       options,
     );
@@ -451,5 +506,61 @@ export class Exchange {
       options,
     );
     return !new BigNumber(result).isZero();
+  }
+
+  public async getERC20Allowance(
+    {
+      ownerAddress,
+      spenderAddress,
+      tokenAddress,
+      decimals,
+    }: {
+      ownerAddress: Address,
+      spenderAddress: Address,
+      tokenAddress: Address,
+      decimals: number,
+    },
+    options?: CallOptions,
+  ): Promise<string> {
+    const token = new this.contracts.web3.eth.Contract((erc20Abi as Json).abi);
+    token.options.address = tokenAddress;
+    const allowance: string = await this.contracts.call(
+      token.methods.allowance(
+        ownerAddress,
+        spenderAddress,
+      ),
+      options,
+    );
+    return uint256ToHumanTokenAmount(allowance, decimals);
+  }
+
+  private encodeZeroExExchangeData(
+    proxyExchangeData: {
+      tokenFrom: string,
+      allowanceTarget: string,
+      minUsdcAmount: BigNumberable,
+      exchange: string,
+      exchangeData: string,
+    },
+  ): string {
+    return this.contracts.web3.eth.abi.encodeParameters(
+      [
+        'address',
+        'address',
+        'uint256',
+        'address',
+        'bytes',
+      ],
+      _.at(
+        proxyExchangeData,
+        [
+          'tokenFrom',
+          'allowanceTarget',
+          'minUsdcAmount',
+          'exchange',
+          'exchangeData',
+        ],
+      ),
+    );
   }
 }

@@ -44,14 +44,9 @@ import {
   TxOptions,
   NativeSendOptions,
 } from '../types';
+import { normalizeResponse, OUTCOMES } from './helpers';
 
-enum OUTCOMES {
-  INITIAL = 0,
-  RESOLVED = 1,
-  REJECTED = 2,
-}
-
-interface Json {
+export interface Json {
   abi: any;
   networks: { [network: number]: any };
 }
@@ -64,8 +59,8 @@ interface ContractInfo {
 
 export class Contracts {
   private defaultOptions: SendOptions;
-  protected web3: Web3;
 
+  public web3: Web3;
   public networkId: number;
   public contractsList: ContractInfo[] = [];
   public factRegistry: Contract;
@@ -261,7 +256,7 @@ export class Contracts {
         },
       );
       const stResult = await stPromise;
-      return this.normalizeResponse({ transactionHash: stResult });
+      return normalizeResponse({ transactionHash: stResult });
     }
 
     const promi: PromiEvent<Contract> | any = method.send(
@@ -342,14 +337,14 @@ export class Contracts {
     }
 
     if (confirmationType === ConfirmationType.Hash) {
-      return this.normalizeResponse({ transactionHash });
+      return normalizeResponse({ transactionHash });
     }
 
     if (confirmationType === ConfirmationType.Confirmed) {
       return confirmationPromise;
     }
 
-    return this.normalizeResponse({
+    return normalizeResponse({
       transactionHash,
       confirmation: confirmationPromise,
     });
@@ -404,24 +399,5 @@ export class Contracts {
       'gas',
       'nonce',
     ]);
-  }
-
-  private normalizeResponse(
-    txResult: any,
-  ): any {
-    const txHash = txResult.transactionHash;
-    if (txHash) {
-      const {
-        transactionHash: internalHash,
-        nonce: internalNonce,
-      } = txHash;
-      if (internalHash) {
-        txResult.transactionHash = internalHash;
-      }
-      if (internalNonce) {
-        txResult.nonce = internalNonce;
-      }
-    }
-    return txResult;
   }
 }

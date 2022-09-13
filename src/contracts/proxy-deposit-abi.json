@@ -2,11 +2,15 @@
   "networks": {
     "1": {
       "links": {},
-      "address": "0x029bB89d64695D6A461eEbC1Aab4a4C8657a3f22"
+      "address": "0x8e8bd01b5A9eb272CC3892a2E40E64A716aa2A40"
     },
     "3": {
       "links": {},
-      "address": "0x029bB89d64695D6A461eEbC1Aab4a4C8657a3f22"
+      "address": "0xa4B59b795431de79B56bB28DA877D0f764fF5527"
+    },
+    "5": {
+      "links": {},
+      "address": "0x90228Ce00B3ac220dbCe228417D8B752295bceb2"
     }
   },
   "abi": [
@@ -26,6 +30,11 @@
           "internalType": "uint256",
           "name": "usdcAssetType",
           "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "trustedForwarder",
+          "type": "address"
         }
       ],
       "stateMutability": "nonpayable",
@@ -63,6 +72,51 @@
       "type": "event"
     },
     {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Paused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Unpaused",
+      "type": "event"
+    },
+    {
       "inputs": [],
       "name": "STARKWARE_CONTRACT",
       "outputs": [
@@ -73,78 +127,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "exchange",
-          "type": "address"
-        },
-        {
-          "internalType": "contract IERC20",
-          "name": "token",
-          "type": "address"
-        }
-      ],
-      "name": "approveSwap",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract IERC20",
-          "name": "tokenFrom",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "tokenFromAmount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "minUsdcAmount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "starkKey",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "positionId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "exchange",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "allowanceTarget",
-          "type": "address"
-        },
-        {
-          "internalType": "bytes",
-          "name": "data",
-          "type": "bytes"
-        }
-      ],
-      "name": "approveSwapAndDepositERC20",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -163,6 +145,11 @@
           "internalType": "uint256",
           "name": "positionId",
           "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "signature",
+          "type": "bytes"
         }
       ],
       "name": "deposit",
@@ -184,11 +171,6 @@
         },
         {
           "internalType": "uint256",
-          "name": "minUsdcAmount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
           "name": "starkKey",
           "type": "uint256"
         },
@@ -198,13 +180,18 @@
           "type": "uint256"
         },
         {
-          "internalType": "address",
-          "name": "exchange",
+          "internalType": "contract I_ExchangeProxy",
+          "name": "exchangeProxy",
           "type": "address"
         },
         {
           "internalType": "bytes",
-          "name": "data",
+          "name": "exchangeProxyData",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "signature",
           "type": "bytes"
         }
       ],
@@ -223,11 +210,6 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "minUsdcAmount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
           "name": "starkKey",
           "type": "uint256"
         },
@@ -237,13 +219,18 @@
           "type": "uint256"
         },
         {
-          "internalType": "address",
-          "name": "exchange",
+          "internalType": "contract I_ExchangeProxy",
+          "name": "exchangeProxy",
           "type": "address"
         },
         {
           "internalType": "bytes",
-          "name": "data",
+          "name": "exchangeProxyData",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "signature",
           "type": "bytes"
         }
       ],
@@ -279,7 +266,7 @@
     },
     {
       "inputs": [],
-      "name": "trustedForwarder",
+      "name": "owner",
       "outputs": [
         {
           "internalType": "address",
@@ -292,15 +279,49 @@
     },
     {
       "inputs": [],
-      "name": "versionRecipient",
+      "name": "pause",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "paused",
       "outputs": [
         {
-          "internalType": "string",
+          "internalType": "bool",
           "name": "",
-          "type": "string"
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "unpause",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     }
   ]

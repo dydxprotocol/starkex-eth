@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 
+import starkwarePerpetualAbi from '../contracts/starkware-perpetual-abi.json';
 import usdcAbi from '../contracts/usdc-abi.json';
 import { Networks } from '../types';
 import { getAssetId } from './BytesHelper';
@@ -15,15 +16,19 @@ export const INTEGERS = {
 export const COLLATERAL_ASSET_ID = {
   [Networks.MAINNET]: getAssetId(usdcAbi.networks[1].address),
   [Networks.ROPSTEN]: getAssetId(usdcAbi.networks[3].address),
+  [Networks.GOERLI]: getAssetId(usdcAbi.networks[5].address),
 };
 
-export const ADDRESSES = {
-  ZERO: '0x0000000000000000000000000000000000000000',
-  DYDX_USDC_ADDRESS_ROPSTEN: '0x8707a5bf4c2842d46b31a405ba41b858c0f876c4',
-  USDC_ADDRESS_MAINNET: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-};
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export const USDC_ADDRESSES: {[networkId: number]: string } = {
-  [Networks.ROPSTEN]: ADDRESSES.DYDX_USDC_ADDRESS_ROPSTEN,
-  [Networks.MAINNET]: ADDRESSES.USDC_ADDRESS_MAINNET,
+  [Networks.MAINNET]: usdcAbi.networks[1].address,
+  [Networks.ROPSTEN]: usdcAbi.networks[3].address,
+  [Networks.GOERLI]: usdcAbi.networks[5].address,
+};
+
+export const USDC_EXCHANGE_ADDRESSES: {[networkId: number]: string} = {
+  [Networks.MAINNET]: starkwarePerpetualAbi.networks[1].address,
+  [Networks.ROPSTEN]: starkwarePerpetualAbi.networks[3].address,
+  [Networks.GOERLI]: starkwarePerpetualAbi.networks[5].address,
 };
