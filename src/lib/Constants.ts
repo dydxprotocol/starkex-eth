@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 
-import starkwarePerpetualAbi from '../contracts/starkware-perpetual-abi.json';
 import usdcAbi from '../contracts/usdc-abi.json';
+import usdcExchangeProxyAbi from '../contracts/usdc-exchange-proxy-abi.json';
 import { Networks } from '../types';
 import { getAssetId } from './BytesHelper';
 
@@ -28,7 +28,7 @@ export const USDC_ADDRESSES: {[networkId: number]: string } = {
 };
 
 export const USDC_EXCHANGE_ADDRESSES: {[networkId: number]: string} = {
-  [Networks.MAINNET]: starkwarePerpetualAbi.networks[1].address,
-  [Networks.ROPSTEN]: starkwarePerpetualAbi.networks[3].address,
-  [Networks.GOERLI]: starkwarePerpetualAbi.networks[5].address,
+  [Networks.MAINNET]: usdcExchangeProxyAbi.networks[1].address,
+  [Networks.ROPSTEN]: usdcExchangeProxyAbi.networks[3].address,
+  [Networks.GOERLI]: usdcExchangeProxyAbi.networks[5].address,
 };
