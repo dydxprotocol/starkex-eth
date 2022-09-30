@@ -9,6 +9,7 @@ import {
 import erc20Abi from '../contracts/ierc20-abi.json';
 import {
   COLLATERAL_ASSET_ID,
+  INTEGERS,
   USDC_EXCHANGE_ADDRESSES,
   ZERO_ADDRESS,
 } from '../lib/Constants';
@@ -506,6 +507,50 @@ export class Exchange {
       options,
     );
     return !new BigNumber(result).isZero();
+  }
+
+  public async hasForcedTradeRequest(
+    {
+      starkKeyA,
+      starkKeyB,
+      positionIdA,
+      positionIdB,
+      collateralId,
+      syntheticId,
+      amountCollateral,
+      amountSynthetic,
+      aIsBuyingSynthetic,
+      nonce,
+    }: {
+      starkKeyA: string,
+      starkKeyB: string,
+      positionIdA: BigNumberable,
+      positionIdB: BigNumberable,
+      collateralId: string,
+      syntheticId: string,
+      amountCollateral: string,
+      amountSynthetic: string,
+      aIsBuyingSynthetic: boolean,
+      nonce: string,
+    },
+    options?: CallOptions,
+  ): Promise<boolean> {
+    const result = await this.contracts.call(
+      this.contracts.starkwarePerpetual.methods.getForcedTradeRequest(
+        starkKeyA,
+        starkKeyB,
+        positionIdA,
+        positionIdB,
+        collateralId,
+        syntheticId,
+        amountCollateral,
+        amountSynthetic,
+        aIsBuyingSynthetic,
+        nonce,
+      ),
+      options,
+    );
+    return !new BigNumber(result).eq(INTEGERS.ONES_255) && !new BigNumber(result).eq(0);
   }
 
   public async getERC20Allowance(
