@@ -2,11 +2,15 @@ import Big from 'big.js';
 
 import { axiosRequest } from '../lib/axios/axios';
 import { generateQueryPath } from '../lib/axios/request-helpers';
-import { Networks, ZeroExSwapResponse } from '../types';
+import {
+  Networks,
+  ZeroExSwapResponse,
+} from '../types';
 
 const zeroExUrlMap: { [networkId: number]: string } = {
   [Networks.MAINNET]: 'https://api.0x.org/swap/v1/quote',
   [Networks.ROPSTEN]: 'https://ropsten.api.0x.org/swap/v1/quote',
+  [Networks.GOERLI]: 'https://goerli.api.0x.org/swap/v1/quote',
 };
 
 export async function getZeroExSwapQuote({
@@ -27,6 +31,7 @@ export async function getZeroExSwapQuote({
     url: generateQueryPath(
       zeroExUrlMap[networkId],
       {
+        affiliateAddress: '0xB03fc94a3c49B3126A4E6523D10b65d82C44729C',
         sellAmount,
         sellToken,
         buyToken: buyTokenAddress,

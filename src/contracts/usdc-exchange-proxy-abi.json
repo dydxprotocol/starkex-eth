@@ -1,0 +1,42 @@
+{
+  "networks": {
+    "1": {
+      "links": {},
+      "address": "0x032b17633c956c10845643f0bf9ea7c16a3cfb62"
+    },
+    "3": {
+      "links": {},
+      "address": "0x144b40e133495811e1d5fd64ab73ed40186ecb17"
+    },
+    "5": {
+      "links": {},
+      "address": "0x78809e1619d20662D2227735ea03d6bcC82f616a"
+    }
+  },
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "usdcAddress",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "proxyExchangeData",
+          "type": "bytes"
+        }
+      ],
+      "name": "proxyExchange",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ]
+}
