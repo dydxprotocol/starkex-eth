@@ -32,7 +32,10 @@
     "bignumber.js": "^9.0.1",
     "lodash": "^4.17.20",
     "starkware-crypto": "^1.9.7",
-    "web3": "1.3.6"
+    "web3": "1.3.6",
+    "web3-core": "1.3.6",
+    "web3-eth-contract": "1.3.6",
+    "web3-utils": "1.3.6"
   },
   "devDependencies": {
     "@dydxprotocol/node-service-base-dev": "0.2.5",
