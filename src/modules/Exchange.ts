@@ -293,11 +293,13 @@ export class Exchange {
       sellToken,
       decimals,
       slippagePercentage,
+      zeroExApiKey,
     }: {
       humanSellAmount: string,
       sellToken: string,
       decimals: number,
       slippagePercentage?: string,
+      zeroExApiKey: string,
     },
   ): Promise<{
     expectedUsdcHumanAmount: string,
@@ -315,6 +317,7 @@ export class Exchange {
         buyTokenAddress: getUsdcAddress(this.contracts.networkId),
         slippagePercentage,
         networkId: this.contracts.networkId,
+        apiKey: zeroExApiKey,
       },
     );
 
