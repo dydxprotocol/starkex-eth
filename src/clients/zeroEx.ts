@@ -13,18 +13,22 @@ const zeroExUrlMap: { [networkId: number]: string } = {
   [Networks.GOERLI]: 'https://goerli.api.0x.org/swap/v1/quote',
 };
 
+const ZERO_EX_API_KEY_HEADER = '0x-api-key';
+
 export async function getZeroExSwapQuote({
   sellAmount,
   sellToken,
   buyTokenAddress,
   slippagePercentage,
   networkId,
+  apiKey,
 }: {
   sellAmount: string,
   sellToken: string,
   buyTokenAddress: string,
   slippagePercentage?: string,
   networkId: number,
+  apiKey: string,
 }): Promise<ZeroExSwapResponse> {
   return axiosRequest({
     method: 'GET',
@@ -38,6 +42,9 @@ export async function getZeroExSwapQuote({
         slippagePercentage,
       },
     ),
+    headers: {
+      [ZERO_EX_API_KEY_HEADER]: apiKey,
+    },
   }) as Promise<ZeroExSwapResponse>;
 }
 
