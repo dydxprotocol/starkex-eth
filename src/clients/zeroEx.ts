@@ -43,8 +43,8 @@ export async function getZeroExSwapQuote({
       },
     ),
     headers: {
-      ZERO_EX_API_KEY_HEADER: apiKey,
-    }
+      [ZERO_EX_API_KEY_HEADER]: apiKey,
+    },
   }) as Promise<ZeroExSwapResponse>;
 }
 
