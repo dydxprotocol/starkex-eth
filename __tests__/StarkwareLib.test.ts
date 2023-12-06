@@ -9,8 +9,8 @@ import { DummyProvider } from './helpers/DummyProvider';
 describe('StarwareLib#initiate', () => {
   const dummyProvider = new DummyProvider() as unknown as Provider;
 
-  it('Successfully initiates StarkwareLib on Goerli', async () => {
-    const starkwareLib = new StarkwareLib(dummyProvider, Networks.GOERLI);
+  it('Successfully initiates StarkwareLib on Sepolia', async () => {
+    const starkwareLib = new StarkwareLib(dummyProvider, Networks.SEPOLIA);
     expect(starkwareLib.collateralToken).toBeTruthy();
     expect(starkwareLib.contracts).toBeTruthy();
     expect(starkwareLib.exchange).toBeTruthy();
@@ -24,7 +24,7 @@ describe('StarwareLib#initiate', () => {
         { timeout: 10000 },
       );
 
-      const real = new StarkwareLib(realProvider, Networks.GOERLI);
+      const real = new StarkwareLib(realProvider, Networks.SEPOLIA);
       const account = real.web3.eth.accounts.privateKeyToAccount(process.env.PRIVATE_KEY as string);
       real.web3.eth.accounts.wallet.add(account);
       real.web3.eth.defaultAccount = account.address;

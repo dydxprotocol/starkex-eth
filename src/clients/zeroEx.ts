@@ -11,6 +11,7 @@ const zeroExUrlMap: { [networkId: number]: string } = {
   [Networks.MAINNET]: 'https://api.0x.org/swap/v1/quote',
   [Networks.ROPSTEN]: 'https://ropsten.api.0x.org/swap/v1/quote',
   [Networks.GOERLI]: 'https://goerli.api.0x.org/swap/v1/quote',
+  [Networks.SEPOLIA]: 'https://sepolia.api.0x.org/swap/v1/quote',
 };
 
 const ZERO_EX_API_KEY_HEADER = '0x-api-key';

@@ -11,6 +11,10 @@
     "5": {
       "links": {},
       "address": "0x78809e1619d20662D2227735ea03d6bcC82f616a"
+    },
+    "11155111": {
+      "links": {},
+      "address": "0xA2e0B371d8C18ef436f55F6DC214daCaf3169315"
     }
   },
   "abi": [
