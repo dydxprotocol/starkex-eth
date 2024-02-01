@@ -21,7 +21,7 @@ const defaultLog = {
 describe('Logs', () => {
 
   beforeAll(() => {
-    starkwareLib = new StarkwareLib(dummyProvider, Networks.GOERLI);
+    starkwareLib = new StarkwareLib(dummyProvider, Networks.SEPOLIA);
   });
 
   it('Successfully parses transfer logs', () => {

@@ -17,6 +17,7 @@ export const Networks = {
   ROPSTEN: 3,
   GOERLI: 5,
   KOVAN: 42,
+  SEPOLIA: 11155111,
 };
 
 export interface TxResult {

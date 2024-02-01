@@ -17,6 +17,7 @@ export const COLLATERAL_ASSET_ID = {
   [Networks.MAINNET]: getAssetId(usdcAbi.networks[1].address),
   [Networks.ROPSTEN]: getAssetId(usdcAbi.networks[3].address),
   [Networks.GOERLI]: getAssetId(usdcAbi.networks[5].address),
+  [Networks.SEPOLIA]: getAssetId(usdcAbi.networks[11155111].address),
 };
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
@@ -25,10 +26,13 @@ export const USDC_ADDRESSES: {[networkId: number]: string } = {
   [Networks.MAINNET]: usdcAbi.networks[1].address,
   [Networks.ROPSTEN]: usdcAbi.networks[3].address,
   [Networks.GOERLI]: usdcAbi.networks[5].address,
+  [Networks.SEPOLIA]: usdcAbi.networks[11155111].address,
+
 };
 
 export const USDC_EXCHANGE_ADDRESSES: {[networkId: number]: string} = {
   [Networks.MAINNET]: usdcExchangeProxyAbi.networks[1].address,
   [Networks.ROPSTEN]: usdcExchangeProxyAbi.networks[3].address,
   [Networks.GOERLI]: usdcExchangeProxyAbi.networks[5].address,
+  [Networks.SEPOLIA]: usdcExchangeProxyAbi.networks[11155111].address,
 };

@@ -10,7 +10,7 @@ let starkwareLib: StarkwareLib;
 describe('FactRegistry', () => {
 
   beforeAll(() => {
-    starkwareLib = new StarkwareLib(dummyProvider, Networks.GOERLI);
+    starkwareLib = new StarkwareLib(dummyProvider, Networks.SEPOLIA);
   });
 
   describe('getTransferErc20Fact', () => {
